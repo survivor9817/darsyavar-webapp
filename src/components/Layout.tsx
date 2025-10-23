@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import Book from "./Book";
@@ -33,10 +34,12 @@ const Layout = () => {
   function toggleFehrest() {
     setActiveTab(0);
     setIsFehrestOpen((prev: boolean) => !prev);
+    !isFehrestOpen && history.pushState({ isFehrestVisible: true }, "");
   }
 
   function toggleMenu() {
     setIsMenuOpen((prev: boolean) => !prev);
+    !isMenuOpen && history.pushState({ isMenuVisible: true }, "");
   }
 
   function goToBook() {
@@ -56,6 +59,20 @@ const Layout = () => {
     closeFehrest();
     setActiveTab(2);
   }
+
+  useEffect(() => {
+    function onPopstate() {
+      if (isMenuOpen) {
+        closeMenu();
+      } else if (isFehrestOpen) {
+        closeFehrest();
+      }
+    }
+
+    window.addEventListener("popstate", onPopstate);
+
+    return () => window.removeEventListener("popstate", onPopstate);
+  }, [isMenuOpen, isFehrestOpen]);
 
   return (
     <>
