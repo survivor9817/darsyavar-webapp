@@ -1,14 +1,14 @@
 import CloseBtn from "./CloseBtn";
 import { bookNames } from "../data/booksData.js";
 
-interface Props {
-  bookName: string;
+type Props = {
   onClose: () => void;
-  onChange: () => void;
   style: object;
-}
+  // bookName: string;
+  // onChange: () => void;
+};
 
-const Fehrest = ({ bookName, onClose, onChange, style }: Props) => {
+const Fehrest = ({ onClose, style }: Props) => {
   const bookItems = bookNames.map((bookName) => (
     <option key={bookName} value={bookName}>
       {bookName}
@@ -29,8 +29,8 @@ const Fehrest = ({ bookName, onClose, onChange, style }: Props) => {
               id="BookSelector"
               name="BookSelector"
               className="book-selector"
-              value={bookName}
-              onChange={onChange}
+              // value={bookName}
+              // onChange={onChange}
             >
               {bookItems}
             </select>
