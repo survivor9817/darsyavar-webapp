@@ -294,7 +294,7 @@ p {
   box-sizing: border-box;
 }
 
-.chapter {
+.section-list-item {
   color: #000;
   font-weight: 600;
   white-space: nowrap;
@@ -312,20 +312,26 @@ p {
   transition: background-color 0.5s;
 }
 
-.chapter:hover {
+.section-list-item:hover {
   color: #333;
   background-color: rgba(225, 163, 193, 0.6);
+}
+
+.fehrest-list > li > *:first-child::before {
+  content: "❯";
+  padding-left: 8px;
+  padding-right: 0px;
 }
 
 /* .chapter {
   margin-bottom: 4px;
 } */
 
-.chapter::before {
+/* .chapter::before {
   content: "❯";
   padding-left: 8px;
   padding-right: 0px;
-}
+} */
 
 .article {
   color: #000;

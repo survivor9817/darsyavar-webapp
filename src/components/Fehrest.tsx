@@ -1,5 +1,7 @@
 import CloseBtn from "./CloseBtn";
 import { bookNames } from "../data/booksData.js";
+import FehrestItem from "./FehrestItem.tsx";
+import { bookDataa } from "../data/booksDataa.js";
 
 type Props = {
   onClose: () => void;
@@ -14,6 +16,10 @@ const Fehrest = ({ onClose, style }: Props) => {
       {bookName}
     </option>
   ));
+
+  const fehrestItems = bookDataa.sections.map((section) => {
+    return <FehrestItem key={section.title} listItem={section} />;
+  });
 
   return (
     <>
@@ -36,41 +42,7 @@ const Fehrest = ({ onClose, style }: Props) => {
             </select>
           </header>
           <ol id="fehrestList" className="fehrest-list">
-            <li>
-              <div className="chapter">something</div>
-              <ol className="subsections">
-                <li>
-                  <div className="article">something</div>
-                </li>
-                <li>
-                  <div className="article">something</div>
-                </li>
-                <li>
-                  <div className="article">something</div>
-                </li>
-              </ol>
-            </li>
-            <li>
-              <div className="chapter">something</div>
-              <ol className="subsections">
-                <li>
-                  <div className="article">something</div>
-                </li>
-                <li>
-                  <div className="article">something</div>
-                </li>
-                <li>
-                  <div className="article">something</div>
-                </li>
-              </ol>
-            </li>
-            <li>
-              <div className="chapter">something</div>
-            </li>
-            <li>
-              <div className="chapter">something</div>
-            </li>
-            {/* <FehrestList fehrestData={fehrest} /> */}
+            {fehrestItems}
           </ol>
         </div>
       </div>
