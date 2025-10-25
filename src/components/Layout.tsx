@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import Book from "./Book";
@@ -72,13 +72,19 @@ const Layout = () => {
     return () => window.removeEventListener("popstate", onPopstate);
   }, [isMenuOpen, isFehrestOpen]);
 
-  // const [currentBook, setCurrentBook] = useState(bookDataa["علوم تجربی ۷"])
+  const [currentBook, setCurrentBook] = useState("علوم تجربی ۷");
+  function changeBook(event: React.ChangeEvent<HTMLSelectElement>) {
+    const newBookName = event.target.value;
+    setCurrentBook(newBookName);
+  }
 
   return (
     <>
       <Fehrest
         style={styles.fehrest}
-        onClose={closeFehrest} /* onChange={setCurrentBook} currentBook={currentBook} */
+        onClose={closeFehrest}
+        onChange={changeBook}
+        currentBook={currentBook}
       />
       <div className={`fehrest-backdrop`} style={styles.fehrestBack} onClick={closeFehrest}></div>
 

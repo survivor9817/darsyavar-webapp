@@ -1,23 +1,23 @@
 import CloseBtn from "./CloseBtn";
-import { bookNames } from "../data/booksData.js";
+import { bookNames } from "../data/booksData.ts";
 import FehrestItem from "./FehrestItem.tsx";
-import { bookDataa } from "../data/booksDataa.js";
+import { bookDataa } from "../data/booksDataa.ts";
 
 type Props = {
   onClose: () => void;
-  style: object;
-  // bookName: string;
-  // onChange: () => void;
+  style: React.CSSProperties;
+  currentBook: string;
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
-const Fehrest = ({ onClose, style }: Props) => {
+const Fehrest = ({ onClose, style, currentBook, onChange }: Props) => {
   const bookItems = bookNames.map((bookName) => (
     <option key={bookName} value={bookName}>
       {bookName}
     </option>
   ));
 
-  const fehrestItems = bookDataa["علوم تجربی ۷"].sections.map((section) => {
+  const fehrestItems = bookDataa[currentBook as keyof typeof bookDataa].sections.map((section) => {
     return <FehrestItem key={section.title} listItem={section} />;
   });
 
@@ -35,8 +35,8 @@ const Fehrest = ({ onClose, style }: Props) => {
               id="BookSelector"
               name="BookSelector"
               className="book-selector"
-              // value={bookName}
-              // onChange={onChange}
+              value={currentBook}
+              onChange={onChange}
             >
               {bookItems}
             </select>

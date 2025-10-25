@@ -1,3 +1,7 @@
+button {
+  touch-action: manipulation;
+}
+
 /* Layout */
 .mid-section {
   max-width: 840px;
