@@ -68,15 +68,18 @@ const Layout = () => {
         closeFehrest();
       }
     }
-
     window.addEventListener("popstate", onPopstate);
-
     return () => window.removeEventListener("popstate", onPopstate);
   }, [isMenuOpen, isFehrestOpen]);
 
+  // const [currentBook, setCurrentBook] = useState(bookDataa["علوم تجربی ۷"])
+
   return (
     <>
-      <Fehrest style={styles.fehrest} onClose={closeFehrest} /* onChange={} bookName={} */ />
+      <Fehrest
+        style={styles.fehrest}
+        onClose={closeFehrest} /* onChange={setCurrentBook} currentBook={currentBook} */
+      />
       <div className={`fehrest-backdrop`} style={styles.fehrestBack} onClick={closeFehrest}></div>
 
       <Menu style={styles.menu} onClose={closeMenu} />

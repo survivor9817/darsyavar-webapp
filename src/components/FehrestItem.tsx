@@ -1,5 +1,6 @@
 type FehrestSectionType = {
   id: number;
+  page: number;
   title: string;
   sections?: FehrestSectionType[];
 };

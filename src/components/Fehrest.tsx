@@ -17,7 +17,7 @@ const Fehrest = ({ onClose, style }: Props) => {
     </option>
   ));
 
-  const fehrestItems = bookDataa.sections.map((section) => {
+  const fehrestItems = bookDataa["علوم تجربی ۷"].sections.map((section) => {
     return <FehrestItem key={section.title} listItem={section} />;
   });
 
