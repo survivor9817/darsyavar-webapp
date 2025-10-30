@@ -12,6 +12,7 @@ const Layout = () => {
   const [isFehrestOpen, setIsFehrestOpen] = useLocalStorage("isFehrestOpen", false);
   const [isMenuOpen, setIsMenuOpen] = useLocalStorage("isMenuOpen", false);
   const [wasFehrestOpen, saveFehrestState] = useLocalStorage("wasFehrestOpened", false);
+
   const isSmallScreen = useMediaQuery("(max-width: 1440px)");
 
   const styles = {

@@ -1,7 +1,7 @@
 import CloseBtn from "./CloseBtn";
-import { bookNames } from "../data/booksData.ts";
 import FehrestItem from "./FehrestItem.tsx";
-import { bookDataa } from "../data/booksDataa.ts";
+import { bookNames } from "../data/booksData.ts";
+import { booksData } from "../data/booksData.ts";
 
 type Props = {
   onClose: () => void;
@@ -11,13 +11,15 @@ type Props = {
 };
 
 const Fehrest = ({ onClose, style, currentBook, onChange }: Props) => {
+  // fetching bookNames data
   const bookItems = bookNames.map((bookName) => (
     <option key={bookName} value={bookName}>
       {bookName}
     </option>
   ));
 
-  const fehrestItems = bookDataa[currentBook as keyof typeof bookDataa].sections.map((section) => {
+  // fetching fehrest data
+  const fehrestItems = booksData[currentBook as keyof typeof booksData].sections.map((section) => {
     return <FehrestItem key={section.title} listItem={section} />;
   });
 

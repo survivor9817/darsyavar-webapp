@@ -17,12 +17,36 @@ const Menu = ({ style, onClose }: Props) => {
           <span className="user-role">معلم مدرسه</span>
           <div className="divider"></div>
           <ul className="menu-items-container">
-            <li className="menu-item">صفحه کاربری</li>
-            <li className="menu-item">خرید جدید</li>
-            <li className="menu-item">تمرین‌های قبلی</li>
-            <li className="menu-item">طراحی امتحان</li>
-            <li className="menu-item">اضافه کردن سؤال</li>
-            <li className="menu-item">تنظیمات</li>
+            <li>
+              <a className="menu-item" href="#">
+                صفحه کاربری
+              </a>
+            </li>
+            <li>
+              <a className="menu-item" href="#">
+                خرید جدید
+              </a>
+            </li>
+            <li>
+              <a className="menu-item" href="#">
+                تمرین‌های قبلی
+              </a>
+            </li>
+            <li>
+              <a className="menu-item" href="#">
+                طراحی امتحان
+              </a>
+            </li>
+            <li>
+              <a className="menu-item" href="#">
+                اضافه کردن سؤال
+              </a>
+            </li>
+            <li>
+              <a className="menu-item" href="#">
+                تنظیمات
+              </a>
+            </li>
           </ul>
         </div>
       </div>
