@@ -438,3 +438,28 @@ export const booksData = {
 };
 
 export const bookNames = Object.keys(booksData);
+
+export function getRefPagesArr(bookName: string): number[] {
+  const book = booksData[bookName as keyof typeof booksData];
+
+  if (!book) {
+    return [];
+  }
+
+  const refPages: number[] = [];
+
+  function extractPages(sections: any[]) {
+    sections.forEach((section) => {
+      refPages.push(section.page);
+
+      // اگر زیربخش داشت، به صورت بازگشتی اونها رو هم پردازش کن
+      if (section.sections && Array.isArray(section.sections)) {
+        extractPages(section.sections);
+      }
+    });
+  }
+
+  extractPages(book.sections);
+
+  return refPages;
+}
