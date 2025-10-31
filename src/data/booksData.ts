@@ -18,7 +18,7 @@ export function createLoremArr(pagesNumber: number) {
 export const booksData = {
   "علوم تجربی ۷": {
     id: 1,
-    totalPages: 138,
+    lastPage: 138,
     title: "علوم تجربی ۷",
     sections: [
       {
@@ -75,7 +75,7 @@ export const booksData = {
   },
   "علوم تجربی ۸": {
     id: 1,
-    totalPages: 146,
+    lastPage: 146,
     title: "علوم تجربی ۸",
     sections: [
       { id: 1, page: 1, title: "مخلوط و جداسازی مواد" },
@@ -97,7 +97,7 @@ export const booksData = {
   },
   "علوم تجربی ۹": {
     id: 1,
-    totalPages: 176,
+    lastPage: 176,
     title: "علوم تجربی ۹",
     sections: [
       {
@@ -179,7 +179,7 @@ export const booksData = {
   },
   "زیست شناسی ۱": {
     id: 4,
-    totalPages: 112,
+    lastPage: 112,
     title: "زیست شناسی ۱",
     sections: [
       {
@@ -257,7 +257,7 @@ export const booksData = {
   },
   "زیست شناسی ۲": {
     id: 5,
-    totalPages: 154,
+    lastPage: 154,
     title: "زیست شناسی ۲",
     sections: [
       {
@@ -351,7 +351,7 @@ export const booksData = {
   },
   "زیست شناسی ۳": {
     id: 6,
-    totalPages: 125,
+    lastPage: 125,
     title: "زیست شناسی ۳",
     sections: [
       {

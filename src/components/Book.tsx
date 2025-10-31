@@ -11,24 +11,6 @@ type Props = {
 };
 
 const Book = ({ currentBook, currentPage, setCurrentPage }: Props) => {
-  // fetching page data
-  const totalPages = booksData[currentBook as keyof typeof booksData].totalPages;
-  const renderedPages = useMemo(() => {
-    const pagesContentArr = createLoremArr(totalPages);
-    return pagesContentArr.map(({ id, content }) => {
-      const pageNumber = toFaNums(id);
-      return (
-        <section key={id} id={`page${id}`} className="page">
-          <div>{`صفحه ${pageNumber}`}</div>
-          <div>
-            <p>{content}</p>
-            <img src="./s.img" alt="" width={"700px"} height={"600px"} />
-          </div>
-        </section>
-      );
-    });
-  }, []);
-
   function goToPage(pageNumber: number) {
     if (!pageNumber || isNaN(pageNumber)) return;
     setCurrentPage(pageNumber);
@@ -46,8 +28,7 @@ const Book = ({ currentBook, currentPage, setCurrentPage }: Props) => {
   }
 
   function goToNextPage() {
-    const maxPage = totalPages || 999;
-    const newPage = Math.min(+maxPage, +currentPage + 1);
+    const newPage = Math.min(+lastPage, +currentPage + 1);
     goToPage(newPage);
   }
 
@@ -59,14 +40,13 @@ const Book = ({ currentBook, currentPage, setCurrentPage }: Props) => {
   function onInputNumber(e) {
     const input = e.target;
     const inputValue = input.value;
-
     if (inputValue === "") {
       setCurrentPage("");
       return;
     }
 
     const value = convertToEnglishDigits(inputValue);
-    const max = totalPages;
+    const max = lastPage;
 
     if (value === "0" || isNaN(value) || +value > max) {
       const previousValue = currentPage === "" ? "" : toFaNums(currentPage);
@@ -91,6 +71,24 @@ const Book = ({ currentBook, currentPage, setCurrentPage }: Props) => {
     value === "" && goToPage(onFocusPageNumber.current);
   }
 
+  // fetching page data
+  const lastPage = booksData[currentBook as keyof typeof booksData].lastPage;
+  const renderedPages = useMemo(() => {
+    const pagesContentArr = createLoremArr(lastPage);
+    return pagesContentArr.map(({ id, content }) => {
+      const pageNumber = toFaNums(id);
+      return (
+        <section key={id} id={`page${id}`} className="page">
+          <div>{`صفحه ${pageNumber}`}</div>
+          <div>
+            <p>{content}</p>
+            <img src="./s.img" alt="" width={"700px"} height={"600px"} />
+          </div>
+        </section>
+      );
+    });
+  }, []);
+
   return (
     <>
       <div id="BookTabContainer" className="tab-container">
@@ -108,7 +106,7 @@ const Book = ({ currentBook, currentPage, setCurrentPage }: Props) => {
               id="PageInputRange"
               type="range"
               min="1"
-              max={totalPages}
+              max={lastPage}
               step="1"
               value={
                 currentPage === "" || currentPage === 0
