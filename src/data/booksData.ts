@@ -1,4 +1,4 @@
-const lorem = `
+export const lorem = `
   متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی.
   متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی.
   متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی.
@@ -6,7 +6,7 @@ const lorem = `
   متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی.
   `;
 
-function createLoremArr(pagesNumber: number) {
+export function createLoremArr(pagesNumber: number) {
   const loremArray = [];
   for (let i = 1; i <= pagesNumber; i++) {
     const page = { id: i, content: lorem };

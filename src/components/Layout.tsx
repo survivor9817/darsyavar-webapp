@@ -120,7 +120,7 @@ const Layout = () => {
         </div>
 
         <div className="tabs" style={styles.tabsContainer}>
-          <Book />
+          <Book currentBook={currentBook} />
           <Quiz />
           <Yavar />
         </div>
