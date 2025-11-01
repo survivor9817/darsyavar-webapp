@@ -74,7 +74,7 @@ const Layout = () => {
   }, [isMenuOpen, isFehrestOpen]);
 
   const [currentBook, setCurrentBook] = useState("علوم تجربی ۷");
-  const [currentPage, setCurrentPage] = useLocalStorage(currentBook, 1);
+  const [currentPage, setCurrentPage] = useLocalStorage<number | string>(currentBook, 1);
   function changeBook(event: React.ChangeEvent<HTMLSelectElement>) {
     const newBookName = event.target.value;
     setCurrentBook(newBookName);

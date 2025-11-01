@@ -6,13 +6,14 @@ import { convertToEnglishDigits } from "../utils/convertToEnglishDigits.ts";
 
 type Props = {
   currentBook: string;
-  currentPage: number;
-  setCurrentPage: (currentPageNumber: number) => void;
+  currentPage: number | string;
+  setCurrentPage: (currentPageNumber: number | string) => void;
 };
 
 const Book = ({ currentBook, currentPage, setCurrentPage }: Props) => {
   function goToPage(pageNumber: number) {
     if (!pageNumber || isNaN(pageNumber)) return;
+    // in taabe setCurrentPage mitoone nabaashe age observer fa aal baashe
     setCurrentPage(pageNumber);
     const pageElement = document.getElementById(`page${pageNumber}`);
     pageElement && pageElement.scrollIntoView();
@@ -32,12 +33,12 @@ const Book = ({ currentBook, currentPage, setCurrentPage }: Props) => {
     goToPage(newPage);
   }
 
-  function onInputRange(e) {
-    const inputPage = e.target.value;
+  function onInputRange(e: React.ChangeEvent<HTMLInputElement>) {
+    const inputPage = +e.target.value;
     goToPage(inputPage);
   }
 
-  function onInputNumber(e) {
+  function onInputNumber(e: React.ChangeEvent<HTMLInputElement>) {
     const input = e.target;
     const inputValue = input.value;
     if (inputValue === "") {
@@ -47,9 +48,8 @@ const Book = ({ currentBook, currentPage, setCurrentPage }: Props) => {
 
     const value = convertToEnglishDigits(inputValue);
     const max = lastPage;
-
     if (value === "0" || isNaN(value) || +value > max) {
-      const previousValue = currentPage === "" ? "" : toFaNums(currentPage);
+      const previousValue = currentPage === "" ? "" : toFaNums(+currentPage);
       input.value = previousValue;
       input.style.backgroundColor = "rgb(255, 124, 124)";
       setTimeout(() => {
@@ -60,15 +60,15 @@ const Book = ({ currentBook, currentPage, setCurrentPage }: Props) => {
     }
   }
 
-  let onFocusPageNumber = useRef(currentPage);
-  function onFocus(e) {
+  const onFocusPageNumber = useRef(currentPage);
+  function onFocus(e: React.FocusEvent<HTMLInputElement>) {
     onFocusPageNumber.current = currentPage;
     e.target.select();
   }
 
-  function onBlur(e) {
+  function onBlur(e: React.FocusEvent<HTMLInputElement>) {
     const value = e.target.value.trim();
-    value === "" && goToPage(onFocusPageNumber.current);
+    value === "" && goToPage(+onFocusPageNumber.current);
   }
 
   // fetching page data
@@ -123,7 +123,7 @@ const Book = ({ currentBook, currentPage, setCurrentPage }: Props) => {
               onChange={onInputNumber}
               onFocus={onFocus}
               onBlur={onBlur}
-              value={currentPage === "" || currentPage === 0 ? "" : toFaNums(currentPage)}
+              value={currentPage === "" || currentPage === 0 ? "" : toFaNums(+currentPage)}
             />
           </div>
         </div>
