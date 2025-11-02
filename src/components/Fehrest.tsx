@@ -2,28 +2,17 @@ import CloseBtn from "./CloseBtn";
 import FehrestItem from "./FehrestItem.tsx";
 import { bookNames } from "../data/booksData.ts";
 import { booksData } from "../data/booksData.ts";
+import { useContext } from "react";
+import { BookContext } from "./Layout.tsx";
 // import { useCallback, useMemo, useRef } from "react";
 
 type Props = {
   onClose: () => void;
   style: React.CSSProperties;
-  currentBook: string;
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
-const Fehrest = ({ onClose, style, currentBook, onChange }: Props) => {
-  // fetching bookNames data
-  const bookItems = bookNames.map((bookName) => (
-    <option key={bookName} value={bookName}>
-      {bookName}
-    </option>
-  ));
-
-  // fetching fehrest data
-  const fehrestItems = booksData[currentBook as keyof typeof booksData].sections.map((section) => {
-    return <FehrestItem key={section.title} listItem={section} />;
-  });
-
+const Fehrest = ({ onClose, style, onChange }: Props) => {
   // Observer
   // const observerRef = useRef(null);
   // const lastRefPageRef = useRef(null);
@@ -116,6 +105,19 @@ const Fehrest = ({ onClose, style, currentBook, onChange }: Props) => {
   //     }
   //   };
   // }, [fehrest, observerCallback]);
+
+  const { currentBook } = useContext(BookContext);
+  // fetching bookNames data
+  const bookItems = bookNames.map((bookName) => (
+    <option key={bookName} value={bookName}>
+      {bookName}
+    </option>
+  ));
+
+  // fetching fehrest data
+  const fehrestItems = booksData[currentBook as keyof typeof booksData].sections.map((section) => {
+    return <FehrestItem key={section.title} listItem={section} />;
+  });
 
   return (
     <>

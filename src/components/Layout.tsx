@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import Book from "./Book";
@@ -6,6 +6,8 @@ import Fehrest from "./Fehrest";
 import Menu from "./Menu";
 import Quiz from "./Quiz";
 import Yavar from "./Yavar";
+
+export const BookContext = createContext<{}>({});
 
 const Layout = () => {
   const [activeTab, setActiveTab] = useLocalStorage("activeTab", 0);
@@ -80,57 +82,61 @@ const Layout = () => {
     setCurrentBook(newBookName);
   }
 
+  const bookContextValue = {
+    currentBook,
+    setCurrentBook,
+    currentPage,
+    setCurrentPage,
+  };
+
   return (
-    <>
-      <Fehrest
-        style={styles.fehrest}
-        onClose={closeFehrest}
-        onChange={changeBook}
-        currentBook={currentBook}
-      />
-      <div className={`fehrest-backdrop`} style={styles.fehrestBack} onClick={closeFehrest}></div>
+    <BookContext.Provider value={bookContextValue}>
+      <>
+        <Fehrest style={styles.fehrest} onClose={closeFehrest} onChange={changeBook} />
+        <div className={`fehrest-backdrop`} style={styles.fehrestBack} onClick={closeFehrest}></div>
 
-      <Menu style={styles.menu} onClose={closeMenu} />
-      <div className={`menu-backdrop`} style={styles.menuBack} onClick={closeMenu}></div>
+        <Menu style={styles.menu} onClose={closeMenu} />
+        <div className={`menu-backdrop`} style={styles.menuBack} onClick={closeMenu}></div>
 
-      <div className="mid-section">
-        <div className="navbar">
-          <button className="nav-btn fehrest-btn" onClick={toggleFehrest}>
-            <i className="msr icon--fehrest"> list </i>
-            <span className="tab-label"> فهرست </span>
-          </button>
-          <div className="tab-btns">
-            <button className="nav-btn book-btn" onClick={goToBook}>
-              <i className="msr icon--book"> menu_book </i>
-              <span className="tab-label"> کتاب </span>
+        <div className="mid-section">
+          <div className="navbar">
+            <button className="nav-btn fehrest-btn" onClick={toggleFehrest}>
+              <i className="msr icon--fehrest"> list </i>
+              <span className="tab-label"> فهرست </span>
             </button>
-            <button className="nav-btn quiz-btn" onClick={goToQuiz}>
-              <i className="msr icon--quiz"> exercise </i>
-              <span className="tab-label"> تمرین </span>
+            <div className="tab-btns">
+              <button className="nav-btn book-btn" onClick={goToBook}>
+                <i className="msr icon--book"> menu_book </i>
+                <span className="tab-label"> کتاب </span>
+              </button>
+              <button className="nav-btn quiz-btn" onClick={goToQuiz}>
+                <i className="msr icon--quiz"> exercise </i>
+                <span className="tab-label"> تمرین </span>
+              </button>
+              <button className="nav-btn yavar-btn" onClick={goToYavar}>
+                <i className="msr icon--yavar"> school </i>
+                <span className="tab-label"> یاور </span>
+              </button>
+              <div className="active-tab-indicator" style={styles.tabIndicator}></div>
+            </div>
+            <button className="nav-btn menu-btn" onClick={toggleMenu}>
+              <i className="msr icon--menu"> menu </i>
+              <span className="tab-label"> منو </span>
             </button>
-            <button className="nav-btn yavar-btn" onClick={goToYavar}>
-              <i className="msr icon--yavar"> school </i>
-              <span className="tab-label"> یاور </span>
-            </button>
-            <div className="active-tab-indicator" style={styles.tabIndicator}></div>
           </div>
-          <button className="nav-btn menu-btn" onClick={toggleMenu}>
-            <i className="msr icon--menu"> menu </i>
-            <span className="tab-label"> منو </span>
-          </button>
-        </div>
 
-        <div className="tabs" style={styles.tabsContainer}>
-          <Book
-            currentBook={currentBook}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-          />
-          <Quiz />
-          <Yavar />
+          <div className="tabs" style={styles.tabsContainer}>
+            <Book
+            // currentBook={currentBook}
+            // currentPage={currentPage}
+            // setCurrentPage={setCurrentPage}
+            />
+            <Quiz />
+            <Yavar />
+          </div>
         </div>
-      </div>
-    </>
+      </>
+    </BookContext.Provider>
   );
 };
 

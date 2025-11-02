@@ -1,4 +1,7 @@
-import { useCallback } from "react";
+// import { useState } from "react";
+
+import { useContext } from "react";
+import { BookContext } from "./Layout";
 
 type FehrestSectionType = {
   id: number;
@@ -12,13 +15,22 @@ type Props = {
 };
 
 const FehrestItem = ({ listItem }: Props) => {
-  const handleClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+  // const [isActive, setActive] = useState(false);
+
+  // function findRefTitlePageNumber(pageNumber: number) {
+  //   if (fehrestPages.includes(pageNumber)) return pageNumber;
+  //   return Math.max(...fehrestPages.filter((page) => page < pageNumber));
+  // }
+
+  const { currentPage, setCurrentPage } = useContext(BookContext);
+
+  function handleClick(event: React.MouseEvent<HTMLDivElement>) {
     const refPageNumber = event.currentTarget.dataset.refPage;
     if (!refPageNumber) return;
-
+    setCurrentPage(refPageNumber); // deghat kon in mitone dar hozoore observer nabaashe
     const relatedPage = document.querySelector(`#page${refPageNumber}`);
     relatedPage?.scrollIntoView();
-  }, []);
+  }
 
   return (
     <>

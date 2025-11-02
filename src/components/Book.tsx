@@ -1,16 +1,19 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { booksData, createLoremArr } from "../data/booksData.ts";
 import { toFaNums } from "../utils/toFaNums";
 import { getLocalData } from "../hooks/getLocalData.ts";
 import { convertToEnglishDigits } from "../utils/convertToEnglishDigits.ts";
+import { BookContext } from "./Layout.tsx";
 
-type Props = {
-  currentBook: string;
-  currentPage: number | string;
-  setCurrentPage: (currentPageNumber: number | string) => void;
-};
+// type Props = {
+//   currentBook: string;
+//   currentPage: number | string;
+//   setCurrentPage: (currentPageNumber: number | string) => void;
+// };
 
-const Book = ({ currentBook, currentPage, setCurrentPage }: Props) => {
+const Book = (/* { currentBook, currentPage, setCurrentPage }: Props */) => {
+  const { currentBook, currentPage, setCurrentPage } = useContext(BookContext);
+
   function goToPage(pageNumber: number) {
     if (!pageNumber || isNaN(pageNumber)) return;
     // in taabe setCurrentPage mitoone nabaashe age observer fa aal baashe
