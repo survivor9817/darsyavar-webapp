@@ -4,6 +4,7 @@ import { bookNames } from "../data/booksData.ts";
 import { booksData } from "../data/booksData.ts";
 import { useContext } from "react";
 import { BookContext } from "./Layout.tsx";
+import { getRefPagesArr } from "../utils/getRefPagesArr.ts";
 // import { useCallback, useMemo, useRef } from "react";
 
 type Props = {
@@ -115,8 +116,11 @@ const Fehrest = ({ onClose, style, onChange }: Props) => {
   ));
 
   // fetching fehrest data
-  const fehrestItems = booksData[currentBook as keyof typeof booksData].sections.map((section) => {
-    return <FehrestItem key={section.title} listItem={section} />;
+  const bookData = booksData[currentBook as keyof typeof booksData];
+  const fehrestData = bookData.sections;
+  const fehrestArr = getRefPagesArr(fehrestData);
+  const fehrestItems = fehrestData.map((section) => {
+    return <FehrestItem key={section.title} listItem={section} fehrestArr={fehrestArr} />;
   });
 
   return (

@@ -1,9 +1,7 @@
-// import { useState } from "react";
-
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { BookContext } from "./Layout";
 
-type FehrestSectionType = {
+export type FehrestSectionType = {
   id: number;
   page: number;
   title: string;
@@ -12,36 +10,45 @@ type FehrestSectionType = {
 
 type Props = {
   listItem: FehrestSectionType;
+  fehrestArr: number[];
 };
 
-const FehrestItem = ({ listItem }: Props) => {
-  // const [isActive, setActive] = useState(false);
-
-  // function findRefTitlePageNumber(pageNumber: number) {
-  //   if (fehrestPages.includes(pageNumber)) return pageNumber;
-  //   return Math.max(...fehrestPages.filter((page) => page < pageNumber));
-  // }
-
+const FehrestItem = ({ listItem, fehrestArr }: Props) => {
+  const [isActive, setActive] = useState(false);
   const { currentPage, setCurrentPage } = useContext(BookContext);
+
+  function findRefTitlePageNumber(pageNumber: number) {
+    if (fehrestArr.includes(pageNumber)) return pageNumber;
+    return Math.max(...fehrestArr.filter((page) => page < pageNumber));
+  }
+
+  useEffect(() => {
+    const currentRefPage = findRefTitlePageNumber(currentPage);
+    setActive(currentRefPage === listItem.page);
+  }, [currentPage, listItem.page, fehrestArr]);
 
   function handleClick(event: React.MouseEvent<HTMLDivElement>) {
     const refPageNumber = event.currentTarget.dataset.refPage;
     if (!refPageNumber) return;
-    setCurrentPage(refPageNumber); // deghat kon in mitone dar hozoore observer nabaashe
+    setCurrentPage(+refPageNumber); // deghat kon in mitone dar hozoore observer nabaashe
     const relatedPage = document.querySelector(`#page${refPageNumber}`);
     relatedPage?.scrollIntoView();
   }
 
   return (
     <>
-      <li key={listItem.title}>
-        <div className="section-list-item" data-ref-page={listItem.page} onClick={handleClick}>
-          {listItem.title}
+      <li>
+        <div
+          className={`section-list-item ${isActive ? "active" : ""}`}
+          data-ref-page={listItem.page}
+          onClick={handleClick}
+        >
+          {listItem.title} {listItem.page}
         </div>
         {listItem.sections && listItem.sections.length > 0 && (
           <ol className="subsections">
             {listItem.sections.map((section) => (
-              <FehrestItem key={section.title} listItem={section} />
+              <FehrestItem key={section.title} listItem={section} fehrestArr={fehrestArr} />
             ))}
           </ol>
         )}
