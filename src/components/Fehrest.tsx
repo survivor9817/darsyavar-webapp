@@ -5,7 +5,6 @@ import { booksData } from "../data/booksData.ts";
 import { useContext, useEffect, useRef } from "react";
 import { BookContext } from "./Layout.tsx";
 import { getRefPagesArr } from "../utils/getRefPagesArr.ts";
-// import { useCallback, useMemo, useRef } from "react";
 
 type Props = {
   onClose: () => void;
@@ -14,10 +13,10 @@ type Props = {
 };
 
 const Fehrest = ({ onClose, style, onChange }: Props) => {
-  const { currentBook, currentPage, setCurrentPage } = useContext(BookContext);
+  const { currentBook, setCurrentPage } = useContext(BookContext);
 
   // Observer
-  function observerCallback(entries) {
+  function observerCallback(entries: IntersectionObserverEntry[]) {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       const observedPage: number = +entry.target.id.replace("page", "");
@@ -31,29 +30,36 @@ const Fehrest = ({ onClose, style, onChange }: Props) => {
     threshold: 0,
   };
 
-  const observerRef = useRef(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   useEffect(() => {
     observerRef.current = new IntersectionObserver(observerCallback, observerOptions);
 
     const pagesToWatch = document.querySelectorAll(".book-section .page");
-    pagesToWatch.forEach((page) => observerRef.current.observe(page));
+    pagesToWatch.forEach((page) => {
+      if (observerRef.current) {
+        observerRef.current.observe(page);
+      }
+    });
 
     return () => {
       if (observerRef.current) {
-        pagesToWatch.forEach((page) => observerRef.current.unobserve(page));
+        pagesToWatch.forEach((page) => {
+          observerRef.current?.unobserve(page);
+        });
         observerRef.current.disconnect();
+        observerRef.current = null;
       }
     };
-  }, [currentPage]);
+  }, [currentBook]);
 
-  // fetching bookNames data
+  // fetching bookNames data and render
   const bookItems = bookNames.map((bookName) => (
     <option key={bookName} value={bookName}>
       {bookName}
     </option>
   ));
 
-  // fetching fehrest data
+  // fetching fehrest data and render
   const bookData = booksData[currentBook as keyof typeof booksData];
   const fehrestData = bookData.sections;
   const fehrestArr = getRefPagesArr(fehrestData);

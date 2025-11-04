@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { BookContext } from "./Layout";
+import { toFaNums } from "../utils/toFaNums";
 
 export type FehrestSectionType = {
   id: number;
@@ -23,7 +24,6 @@ const FehrestItem = ({ listItem, fehrestArr }: Props) => {
     return Math.max(...fehrestArr.filter((page) => page < pageNumber));
   }
 
-  // تابع بازگشتی برای چک کردن فعال بودن فرزندان
   function checkIfChildIsActive(section: FehrestSectionType, currentRefPage: number): boolean {
     if (section.page === currentRefPage) return true;
 
@@ -38,7 +38,6 @@ const FehrestItem = ({ listItem, fehrestArr }: Props) => {
     const currentRefPage = findRefTitlePageNumber(currentPage);
     setActive(currentRefPage === listItem.page);
 
-    // چک کردن اینکه آیا یکی از فرزندان فعال هست
     if (listItem.sections && listItem.sections.length > 0) {
       const childActive = listItem.sections.some((child) =>
         checkIfChildIsActive(child, currentRefPage)
@@ -65,7 +64,7 @@ const FehrestItem = ({ listItem, fehrestArr }: Props) => {
           data-ref-page={listItem.page}
           onClick={handleClick}
         >
-          {listItem.title} {listItem.page}
+          {listItem.title} {toFaNums(listItem.page)}
         </div>
         {listItem.sections && listItem.sections.length > 0 && (
           <ol className={`subsections ${isActive || hasActiveChild ? "expanded" : ""}`}>

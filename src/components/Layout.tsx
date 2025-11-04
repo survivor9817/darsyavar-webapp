@@ -71,7 +71,9 @@ const Layout = () => {
         closeFehrest();
       }
     }
+
     window.addEventListener("popstate", onPopstate);
+
     return () => window.removeEventListener("popstate", onPopstate);
   }, [isMenuOpen, isFehrestOpen]);
 
@@ -127,11 +129,7 @@ const Layout = () => {
           </div>
 
           <div className="tabs" style={styles.tabsContainer}>
-            <Book
-            // currentBook={currentBook}
-            // currentPage={currentPage}
-            // setCurrentPage={setCurrentPage}
-            />
+            <Book />
             <Quiz />
             <Yavar />
           </div>
