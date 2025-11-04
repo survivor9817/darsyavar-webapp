@@ -366,7 +366,7 @@ p {
   margin-bottom: 8px;
   margin-right: 12px;
   overflow: hidden;
-  /* max-height: 0; */
+  max-height: 0;
   transition: opacity 0.3s ease, max-height 0.3s ease;
 }
 

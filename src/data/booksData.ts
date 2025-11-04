@@ -359,7 +359,7 @@ export const booksData = {
         page: 1,
         title: "فصل ۱. مولکول‌های اطلاعاتی",
         sections: [
-          { id: 1, page: 9, title: "نوکلئیک اسیدها" },
+          { id: 1, page: 2, title: "نوکلئیک اسیدها" },
           { id: 2, page: 10, title: "همانندسازی DNA" },
           { id: 3, page: 17, title: "پروتئین‌ها" },
         ],
