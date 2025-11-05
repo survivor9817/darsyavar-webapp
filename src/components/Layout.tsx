@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import Book from "./Book";
@@ -7,7 +7,19 @@ import Menu from "./Menu";
 import Quiz from "./Quiz";
 import Yavar from "./Yavar";
 
-export const BookContext = createContext<{}>({});
+type BookContextType = {
+  currentBook: string;
+  setCurrentBook: (value: string) => void;
+  currentPage: number | "";
+  setCurrentPage: (value: number | "") => void;
+};
+
+export const BookContext = createContext<BookContextType>({
+  currentBook: "علوم تجربی ۷",
+  setCurrentBook: () => {},
+  currentPage: 1,
+  setCurrentPage: () => {},
+});
 
 const Layout = () => {
   const [activeTab, setActiveTab] = useLocalStorage("activeTab", 0);
@@ -77,15 +89,10 @@ const Layout = () => {
     return () => window.removeEventListener("popstate", onPopstate);
   }, [isMenuOpen, isFehrestOpen]);
 
-  const [currentBook, setCurrentBook] = useState("علوم تجربی ۷");
-  const [currentPage, setCurrentPage] = useLocalStorage<number | string>(currentBook, 1);
+  const [currentBook, setCurrentBook] = useLocalStorage("lastBookRead", "علوم تجربی ۷");
+  const [currentPage, setCurrentPage] = useLocalStorage<number | "">(currentBook, 1);
 
-  function changeBook(event: React.ChangeEvent<HTMLSelectElement>) {
-    const newBookName = event.target.value;
-    setCurrentBook(newBookName);
-  }
-
-  const bookContextValue = {
+  const bookContextValue: BookContextType = {
     currentBook,
     setCurrentBook,
     currentPage,
@@ -95,7 +102,7 @@ const Layout = () => {
   return (
     <BookContext.Provider value={bookContextValue}>
       <>
-        <Fehrest style={styles.fehrest} onClose={closeFehrest} onChange={changeBook} />
+        <Fehrest style={styles.fehrest} onClose={closeFehrest} />
         <div className={`fehrest-backdrop`} style={styles.fehrestBack} onClick={closeFehrest}></div>
 
         <Menu style={styles.menu} onClose={closeMenu} />

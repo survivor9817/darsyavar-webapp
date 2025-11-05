@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { booksData, createLoremArr } from "../data/booksData.ts";
 import { toFaNums } from "../utils/toFaNums";
 import { getLocalData } from "../hooks/getLocalData.ts";
@@ -7,9 +7,11 @@ import { BookContext } from "./Layout.tsx";
 
 const Book = () => {
   const { currentBook, currentPage, setCurrentPage } = useContext(BookContext);
+  const [isInputNumberEmpty, setIsInputNumberEmpty] = useState(false);
 
   function goToPage(pageNumber: number) {
     if (!pageNumber || isNaN(pageNumber)) return;
+    setIsInputNumberEmpty(false);
     setCurrentPage(pageNumber); // in taabe setCurrentPage mitoone nabaashe age observer fa aal baashe
     const pageElement = document.getElementById(`page${pageNumber}`);
     pageElement && pageElement.scrollIntoView();
@@ -38,8 +40,11 @@ const Book = () => {
     const input = e.target;
     const inputValue = input.value;
     if (inputValue === "") {
-      setCurrentPage("");
+      // setCurrentPage("");
+      setIsInputNumberEmpty(true);
       return;
+    } else {
+      setIsInputNumberEmpty(false);
     }
 
     const value = convertToEnglishDigits(inputValue);
@@ -119,7 +124,11 @@ const Book = () => {
               onChange={onInputNumber}
               onFocus={onFocus}
               onBlur={onBlur}
-              value={currentPage === "" || currentPage === 0 ? "" : toFaNums(+currentPage)}
+              // harbaar ke input khaali mishe akharin adad setCurrentPage beshe.
+              // ye state laazem darim ke harbaar input number khaali mishe true beshe
+              //
+              // value={currentPage === "" || currentPage === 0 ? "" : toFaNums(+currentPage)}
+              value={isInputNumberEmpty ? "" : toFaNums(+currentPage)}
             />
           </div>
         </div>
