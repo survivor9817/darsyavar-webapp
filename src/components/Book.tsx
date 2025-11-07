@@ -8,11 +8,12 @@ import { BookContext } from "./Layout.tsx";
 const Book = () => {
   const { currentBook, currentPage, setCurrentPage } = useContext(BookContext);
   const [isInputNumberEmpty, setIsInputNumberEmpty] = useState(false);
+  const [inputNumber, setInputNumber] = useState(Array(currentPage).length);
 
   function goToPage(pageNumber: number) {
     if (!pageNumber || isNaN(pageNumber)) return;
     setIsInputNumberEmpty(false);
-    setCurrentPage(pageNumber); // in taabe setCurrentPage mitoone nabaashe age observer fa aal baashe
+    setCurrentPage(pageNumber);
     const pageElement = document.getElementById(`page${pageNumber}`);
     pageElement && pageElement.scrollIntoView();
   }
@@ -53,10 +54,9 @@ const Book = () => {
       const previousValue = currentPage === "" ? "" : toFaNums(+currentPage);
       input.value = previousValue;
       input.style.backgroundColor = "rgb(255, 124, 124)";
-      setTimeout(() => {
-        input.style.backgroundColor = "white";
-      }, 300);
+      setTimeout(() => (input.style.backgroundColor = "white"), 300);
     } else {
+      // if (String(currentPage).length > inputValue.length) return;
       goToPage(value);
     }
   }
@@ -68,8 +68,17 @@ const Book = () => {
   }
 
   function onBlur(e: React.FocusEvent<HTMLInputElement>) {
-    const value = e.target.value.trim();
-    value === "" && goToPage(+onFocusPageNumber.current);
+    // const value = e.target.value.trim();
+    // value === "" && goToPage(+onFocusPageNumber.current);
+    const value = convertToEnglishDigits(e.target.value.trim());
+    value === "" ? goToPage(+onFocusPageNumber.current) : goToPage(value);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      const inputPage = convertToEnglishDigits(e.currentTarget.value);
+      goToPage(+inputPage);
+    }
   }
 
   // fetching page data
@@ -124,6 +133,7 @@ const Book = () => {
               onChange={onInputNumber}
               onFocus={onFocus}
               onBlur={onBlur}
+              onKeyDown={handleKeyDown}
               // harbaar ke input khaali mishe akharin adad setCurrentPage beshe.
               // ye state laazem darim ke harbaar input number khaali mishe true beshe
               //

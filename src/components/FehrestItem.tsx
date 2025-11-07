@@ -26,7 +26,6 @@ const FehrestItem = ({ listItem, fehrestArr }: Props) => {
 
   function checkIfChildIsActive(section: FehrestSectionType, currentRefPage: number): boolean {
     if (section.page === currentRefPage) return true;
-
     if (section.sections && section.sections.length > 0) {
       return section.sections.some((child) => checkIfChildIsActive(child, currentRefPage));
     }
