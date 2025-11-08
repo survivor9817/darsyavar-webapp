@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { booksData, createLoremArr } from "../data/booksData.ts";
 import { toFaNums } from "../utils/toFaNums";
 import { getLocalData } from "../hooks/getLocalData.ts";
@@ -7,13 +7,11 @@ import { BookContext } from "./Layout.tsx";
 
 const Book = () => {
   const { currentBook, currentPage, setCurrentPage } = useContext(BookContext);
-  const [isInputNumberEmpty, setIsInputNumberEmpty] = useState(false);
-  const [inputNumber, setInputNumber] = useState(Array(currentPage).length);
 
   function goToPage(pageNumber: number) {
     if (!pageNumber || isNaN(pageNumber)) return;
-    setIsInputNumberEmpty(false);
     setCurrentPage(pageNumber);
+    // you can useRef instead
     const pageElement = document.getElementById(`page${pageNumber}`);
     pageElement && pageElement.scrollIntoView();
   }
@@ -37,27 +35,28 @@ const Book = () => {
     goToPage(inputPage);
   }
 
+  const inputPageNumberValue = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (inputPageNumberValue.current) {
+      inputPageNumberValue.current.value = toFaNums(currentPage as number);
+    }
+  }, [currentPage]);
+
   function onInputNumber(e: React.ChangeEvent<HTMLInputElement>) {
     const input = e.target;
     const inputValue = input.value;
-    if (inputValue === "") {
-      // setCurrentPage("");
-      setIsInputNumberEmpty(true);
-      return;
-    } else {
-      setIsInputNumberEmpty(false);
-    }
-
+    if (inputValue === "") return;
     const value = convertToEnglishDigits(inputValue);
     const max = lastPage;
     if (value === "0" || isNaN(value) || +value > max) {
-      const previousValue = currentPage === "" ? "" : toFaNums(+currentPage);
+      const previousValue = toFaNums(parseInt(value.slice(0, -1), 10));
       input.value = previousValue;
       input.style.backgroundColor = "rgb(255, 124, 124)";
       setTimeout(() => (input.style.backgroundColor = "white"), 300);
     } else {
-      // if (String(currentPage).length > inputValue.length) return;
-      goToPage(value);
+      if (inputPageNumberValue.current) {
+        inputPageNumberValue.current.value = toFaNums(value);
+      }
     }
   }
 
@@ -68,15 +67,18 @@ const Book = () => {
   }
 
   function onBlur(e: React.FocusEvent<HTMLInputElement>) {
-    // const value = e.target.value.trim();
-    // value === "" && goToPage(+onFocusPageNumber.current);
     const value = convertToEnglishDigits(e.target.value.trim());
     value === "" ? goToPage(+onFocusPageNumber.current) : goToPage(value);
+    if (inputPageNumberValue.current) {
+      inputPageNumberValue.current.value = toFaNums(currentPage as number);
+    }
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       const inputPage = convertToEnglishDigits(e.currentTarget.value);
+      onFocusPageNumber.current = +inputPage;
+      console.log(onFocusPageNumber.current);
       goToPage(+inputPage);
     }
   }
@@ -134,11 +136,7 @@ const Book = () => {
               onFocus={onFocus}
               onBlur={onBlur}
               onKeyDown={handleKeyDown}
-              // harbaar ke input khaali mishe akharin adad setCurrentPage beshe.
-              // ye state laazem darim ke harbaar input number khaali mishe true beshe
-              //
-              // value={currentPage === "" || currentPage === 0 ? "" : toFaNums(+currentPage)}
-              value={isInputNumberEmpty ? "" : toFaNums(+currentPage)}
+              ref={inputPageNumberValue}
             />
           </div>
         </div>
