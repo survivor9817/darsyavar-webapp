@@ -34,7 +34,7 @@ const FehrestItem = ({ listItem, fehrestArr }: Props) => {
   }
 
   useEffect(() => {
-    const currentRefPage = findRefTitlePageNumber(currentPage);
+    const currentRefPage = findRefTitlePageNumber(currentPage as number); // nemidoonam doroste yaa na
     setActive(currentRefPage === listItem.page);
 
     if (listItem.sections && listItem.sections.length > 0) {

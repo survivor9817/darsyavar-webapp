@@ -608,3 +608,851 @@ input[type="number"] {
   padding: 16px;
   margin: 16px 0;
 }
+
+/* az inja be baalaa okeye taghriban. az inja be paeen roo okeyesh mikonim inshalla */
+/* exercise filter styles */
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 500px;
+  padding: 8px;
+}
+
+.quiz-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 16px;
+  /* padding-top: 0px; */
+  border: 2px solid black;
+  border-radius: 16px;
+  width: 100%;
+  /* height: auto; */
+  height: 116px;
+  /* height: 200px; */
+  /* height: 286px; */
+  /* height: 300px; */
+  max-width: 460px;
+  overflow: hidden;
+  transition: height 0.3s ease;
+  z-index: 3;
+}
+
+.filter-criteria {
+  position: relative;
+}
+
+/* class asli label ro tori michinim ke tooye select khaali gharaar begire */
+.filter-label {
+  display: inline-block;
+  margin-inline: 12px;
+  padding-block: 4px;
+  padding-inline: 4px;
+  text-align: right;
+  background-color: #ffffff;
+  z-index: 10;
+  pointer-events: none;
+  font-weight: bold;
+
+  font-size: 18px;
+  color: #1a73e8;
+
+  position: absolute;
+  transform: translateY(+70%);
+  transition: font-size 0.3s ease, transform 0.3s ease, color 0.3s ease;
+}
+
+/* vaghti khaali nist baa js ye class midim va ... */
+.filter-label.up {
+  font-size: 16px;
+  transform: translateY(-5%);
+  color: #000;
+}
+
+.filter-criteria select {
+  border: 1px solid #838383;
+  width: 100%;
+  height: 52px;
+  padding-right: 16px;
+  margin-block: 16px;
+  /* margin-bottom: 16px; */
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: left 12px center;
+  background-repeat: no-repeat;
+  background-size: 32px;
+}
+
+.filter-criteria select option[value=""] {
+  display: none;
+}
+
+/* ai filter select css */
+.filter-item {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease-out, opacity 0.3s ease-out, margin 0.3s ease-out;
+}
+
+.filter-item.visible {
+  max-height: 100%; /* بسته به ارتفاع واقعی FilterSelector */
+  opacity: 1;
+  /* margin-bottom: 1rem; */
+}
+
+/* dokme shorooe tamrin */
+.btn-container {
+  display: flex;
+  visibility: hidden;
+  align-items: center;
+  min-width: 230px;
+  height: 64px;
+  border: 2px solid black;
+  border-radius: 150px;
+  background-color: white;
+
+  z-index: 4;
+
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+
+  /* opacity: 1; */
+  /* transform: translateY(-27px); */
+}
+
+.btn-container.btn-visible {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(-27px);
+}
+
+.start-exercise-btn {
+  width: 95.6%;
+  height: 48px;
+  margin: 0 2.2%;
+  border-radius: 193px;
+  background-color: black;
+  align-content: center;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-exercise-btn:hover {
+  background-color: #333;
+}
+
+/* exercise section */
+.exercises-container {
+  display: flex;
+  /* display: none; */
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+}
+
+.exercises-container > :nth-child(2),
+.exercises-container > :nth-child(3) {
+  margin-bottom: -8px;
+}
+
+.tab-container--exercise > * {
+  flex-shrink: 0;
+}
+
+/* Row 1 : Navigation Buttons of Exercise Section */
+.exercise-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn--exercise-prev,
+.btn--exercise-next {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  background-color: transparent;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.icon-btn {
+  /* display: inline-flex;
+    justify-content: center;
+    align-items: center; */
+  font-variation-settings: "FILL" 0, "wght" 600, "GRAD" 0, "opsz" 80;
+  font-size: 48px;
+  background-color: transparent;
+  transition: transform 0.1s ease;
+  border-radius: 50%;
+  /* color: black; */
+
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  user-select: none;
+
+  -webkit-tap-highlight-color: transparent; /* حذف هایلایت تاچ در موبایل */
+  outline: none; /* حذف outline (می‌توانید استایل بهتری جایگزین کنید) */
+}
+
+.icon-btn:hover {
+  transform: scale(1.07);
+}
+
+.icon-btn:active {
+  transform: scale(0.95); /* حس کلیک شدن */
+}
+
+/* برای حفظ accessibility بهتر است outline را به صورت کنترل شده نگه دارید */
+/* .btn--exercise-prev:focus,
+.btn--exercise-next:focus {
+  outline: 2px solid #4a90e2; 
+  outline-offset: 2px;
+} */
+
+/* Row 2 : Exercise Number and Tags  */
+.number-tags-container {
+  display: flex;
+  align-items: center;
+  border: 2px solid black;
+  border-bottom: none;
+  border-radius: 28px 28px 0px 0px;
+  font-size: 16px;
+  height: 58px;
+  position: relative;
+}
+
+.exercise-number {
+  color: black;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  right: 18px;
+  z-index: 1;
+}
+
+.tags-container {
+  z-index: 3;
+  background-color: white;
+  position: absolute;
+  left: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 64px;
+  overflow: auto;
+  white-space: nowrap;
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in Internet Explorer 10+ */
+  max-width: 136px;
+  transition: max-width 0.3s ease;
+}
+
+.tags-container:hover {
+  max-width: 100%;
+}
+
+.tags-list {
+  all: unset;
+  display: inline-flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-inline: 8px;
+  height: 48px;
+}
+
+.tag {
+  flex-shrink: 0;
+  background-color: black;
+  color: white;
+  font-size: 16px;
+  margin-block: 4px;
+  padding: 8px 16px;
+  border-radius: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.tag:hover {
+  background-color: #333;
+}
+
+.tag:first-child {
+  width: 120px;
+}
+
+/* Row 3 : progress bar */
+.progress-wrapper {
+  padding-inline: 8px;
+  border-inline: 2px solid black;
+  border-right: 2px solid black;
+  border-left: 2px solid black;
+}
+
+.progress-container {
+  background-color: #e0e0e0;
+  border-radius: 20px;
+  height: 12px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+  /* background: rgb(103, 103, 103); */
+  border-radius: 20px;
+  width: 0%;
+  transition: width 0.4s ease-in-out;
+}
+
+/* Row 4 : Question-Box */
+.exercise__question-box {
+  position: relative;
+  border: 2px solid black;
+  border-top: none;
+  border-radius: 0px 0px 16px 16px;
+  font-size: 18px;
+  padding: 8px 16px;
+  text-align: justify;
+  line-height: 1.6;
+  transition: border-radius 0.3s ease;
+
+  min-height: 120px;
+}
+
+.open .exercise__question-box {
+  border-bottom-left-radius: 6px;
+}
+
+/* styles of question itself */
+.question {
+  margin-bottom: 20px;
+  margin-top: 12px;
+}
+
+.question p {
+  margin-bottom: 12px;
+  margin-top: 12px;
+}
+
+.options li {
+  margin: 10px 0;
+}
+
+/* Question-Box__feedback-msg */
+.feedback-msg-container {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.feedback-msg-list {
+  position: relative;
+  overflow: hidden;
+  width: 250px;
+  height: 120px;
+  z-index: 2;
+}
+
+.feedback-msg {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 165px;
+  padding: 8px;
+  margin-left: 8px;
+  margin-bottom: 8px;
+  border-radius: 16px 4px 16px 4px;
+  color: #fff;
+  text-align: center;
+  transform: translateX(-105%);
+  transition: transform 0.3s ease;
+}
+
+li.feedback-msg-pop-in {
+  transform: translateX(0%);
+}
+
+.feedback-msg i {
+  font-size: 24px;
+  font-weight: 400;
+  transition: transform 0.3s ease;
+}
+
+.feedback-msg span {
+  margin-right: 8px;
+}
+
+.correct {
+  background-color: #4caf50;
+}
+
+.incorrect {
+  background-color: #f44336;
+}
+
+.like {
+  background-color: #ff69b4;
+}
+
+.star {
+  background-color: #ffd700;
+  color: black;
+}
+
+.report {
+  background-color: #ff8c00;
+}
+
+/* Row 5 : Middle Row : answerToggle-authorLink-userInputs */
+.exercise__middle-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  font-size: 18px;
+}
+
+.toggle-author-container,
+.details-inputBtns-container {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  width: 340px;
+  height: 64px;
+  border: 2px solid black;
+  border-radius: 150px;
+  transition: border-radius 0.3s;
+}
+
+@media screen and (max-width: 735px) {
+  .exercise__middle-bar {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .toggle-author-container,
+  .details-inputBtns-container {
+    width: 100%;
+  }
+}
+
+.open .toggle-author-container {
+  border-bottom-right-radius: 25px;
+}
+
+.open .details-inputBtns-container {
+  border-top-left-radius: 25px;
+}
+
+/* Rightside of Middle Row : inside of toggle-author-container */
+.btn--show-answer {
+  flex-shrink: 0;
+  width: 95.6%;
+  height: 48px;
+  margin: 0 2.2%;
+  border-radius: 193px;
+  background-color: black;
+  align-content: center;
+  text-align: center;
+  color: white;
+  text-wrap: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background-color 0.3s ease, width 0.5s ease, border-radius 0.5s ease;
+}
+
+.btn--show-answer:hover {
+  background-color: #333;
+}
+
+.open .btn--show-answer {
+  width: 110px;
+  border-bottom-right-radius: 25px;
+}
+
+.btn--show-answer::before {
+  content: "مشاهده پاسخ تشریحی";
+}
+
+.open .btn--show-answer::before {
+  content: "بستن پاسخ";
+}
+
+.exercise-author {
+  flex-shrink: 0;
+  width: 190px;
+  height: 48px;
+  padding-right: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+@media screen and (max-width: 735px) {
+  .exercise-author {
+    width: 100%;
+  }
+}
+
+.exercise-author i {
+  font-size: 32px;
+  margin-left: 4px;
+}
+
+/* Leftside of Middle Row : inside of exercise-details-container */
+.exercise-details {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 95.6%;
+  height: 48px;
+  margin: 0 2.2%;
+  /* border: 6px double white; */
+  border: 2px solid black;
+  border-radius: 193px;
+  background-color: black;
+  align-content: center;
+  color: white;
+  /* font-weight: bold; */
+  text-align: center;
+  position: relative;
+  transform: translateX(0%);
+  transition: transform 0.5s;
+}
+
+.open .exercise-details {
+  transform: translateX(105%);
+}
+
+.exercise-feedback-btns {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  width: 340px;
+  position: relative;
+  transform: translateX(0);
+  transition: transform 0.5s;
+}
+
+@media screen and (max-width: 735px) {
+  .exercise-feedback-btns {
+    width: 100%;
+  }
+}
+
+.open .exercise-feedback-btns {
+  transform: translateX(100%);
+}
+
+/* exercise option buttons */
+.exercise-feedback-btns button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  cursor: pointer;
+}
+
+/* .btn--inputs:hover {
+    transform: scale(1.1); 
+} */
+
+.exercise-feedback-btns i {
+  color: black;
+}
+
+/* mitoni class ekhtesaasie i haaye inja ro vardaari */
+.btn--correct:hover i,
+.btn--correct.filled i {
+  color: #4caf50;
+}
+
+.btn--incorrect:hover i,
+.btn--incorrect.filled i {
+  color: #f44336;
+}
+
+.btn--like:hover i,
+.btn--like.filled i {
+  color: #ff69b4;
+}
+
+.btn--star:hover i,
+.btn--star.filled i {
+  color: #ffd700;
+}
+
+.btn--report:hover i,
+.btn--report.filled i {
+  color: #ff8c00;
+}
+
+.filled i {
+  font-variation-settings: "FILL" 1;
+}
+
+/* Row 6 : Answer Box */
+.exercise__answer-box {
+  border: 2px solid black;
+  border-radius: 16px 6px 30px 30px;
+  margin-bottom: 16px;
+  line-height: 1.6;
+  text-align: justify;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+
+  padding-bottom: 48px;
+  min-height: 130px;
+  position: relative;
+}
+
+.open .exercise__answer-box {
+  max-height: 500vh;
+  opacity: 1;
+}
+
+.descriptive-answer {
+  padding: 8px 16px;
+  font-size: 18px;
+}
+
+.descriptive-answer h2 {
+  color: #333;
+  font-size: 24px;
+  padding-top: 16px;
+}
+
+.descriptive-answer p {
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+.option {
+  margin: 20px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+/* Row 7 : References */
+.exercise-bottom-bar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.ref-list * {
+  display: flex;
+}
+
+.ref-list {
+  margin-top: 8px;
+}
+
+.ref-book {
+  background-color: black;
+  border: 6px double white;
+  border-radius: 36px;
+  box-sizing: border-box;
+  /* height: 64px; */
+}
+
+.book {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  /* background-color: black; */
+  color: white;
+  padding: 0 20px 0 10px;
+  font-weight: bold;
+}
+
+.pages {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: white;
+  border-radius: 48px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  height: 48px;
+  width: 100%;
+}
+
+.horizontally-scrollable {
+  overflow: auto;
+  white-space: nowrap;
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in Internet Explorer 10+ */
+}
+
+.ref-page {
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  box-sizing: border-box;
+  min-width: 40px;
+  height: 40px;
+  border-radius: 30px;
+  margin: 2px 0px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.ref-page:hover {
+  background-color: #555;
+}
+
+span.ref-page {
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  box-sizing: border-box;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  margin: 0;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* button {
+    all: unset;
+} */
+
+* {
+  box-sizing: border-box;
+}
+
+/* in code baraaye bastane zoom do zarbe i dar chrome iphone va safari e */
+button {
+  touch-action: manipulation;
+}
+
+/* body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+.yavar-container {
+  width: 100%;
+  height: 100%;
+  /* border: 2px solid black; */
+}
+
+.chat-container {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+  /* border: 1px solid black; */
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.messages-container {
+  height: 50vh;
+  padding: 8px;
+}
+
+.welcome-massage {
+  margin-top: 20vh;
+  text-align: center;
+  line-height: 2;
+  font-size: 20px;
+  width: 100%;
+}
+
+.chat-input-container {
+  box-sizing: border-box;
+  width: 96%;
+  border: 2px solid black;
+  margin: 8px;
+
+  border-radius: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* position: relative; */
+  position: absolute;
+  bottom: 0;
+}
+
+.chat-input {
+  resize: none; /* امکان تغییر اندازه: none|both|horizontal|vertical */
+  outline: none; /* حذف هایلایت هنگام فوکوس */
+  height: 48px;
+  width: 100%;
+  border-radius: 32px;
+  padding-inline: 16px;
+  padding-block: 14px;
+  border: none;
+}
+
+.send-btn {
+  display: block;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  /* margin-left: 0px; */
+}
+
+.send-btn i {
+  font-size: 48px;
+  transition: transform 0.1s ease;
+}
+
+.send-btn i:hover {
+  transform: scale(1.07);
+}
+
+.send-btn i:active {
+  transform: scale(0.95); /* حس کلیک شدن */
+}

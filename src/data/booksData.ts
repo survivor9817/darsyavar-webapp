@@ -1,3 +1,5 @@
+import type { FehrestSectionType } from "../components/FehrestItem";
+
 export const lorem = `
   متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی.
   متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی. متن اصلی کتاب درسی آزمایشی.
@@ -438,3 +440,56 @@ export const booksData = {
 };
 
 export const bookNames = Object.keys(booksData);
+
+// function extractTitles(sections) {
+//   const titles = [];
+
+//   sections.forEach((section) => {
+//     titles.push(section.title);
+
+//     if (section.sections && section.sections.length > 0) {
+//       titles.push(...extractTitles(section.sections));
+//     }
+//   });
+
+//   return titles;
+// }
+
+// function getBookTitles(book) {
+//   const titles = [];
+//   if (book.sections) {
+//     titles.push(...extractTitles(book.sections));
+//   }
+//   return titles;
+// }
+
+// تابع بازگشتی برای استخراج تیترها به صورت آبجکت
+function extractTitles(sections) {
+  const titles = [];
+
+  sections.forEach((section) => {
+    titles.push({
+      id: section.id,
+      value: section.title,
+      text: section.title,
+    });
+
+    // اگر زیرمجموعه داشت، به صورت بازگشتی تیترهای آن را هم بگیر
+    if (section.sections && section.sections.length > 0) {
+      titles.push(...extractTitles(section.sections));
+    }
+  });
+
+  return titles;
+}
+
+// استخراج تیترهای یک کتاب خاص
+function getBookTitles(book) {
+  const titles = [];
+  if (book.sections) {
+    titles.push(...extractTitles(book.sections));
+  }
+  return titles;
+}
+export const bookContents = getBookTitles(booksData["زیست شناسی ۱"]);
+console.log(bookContents);
