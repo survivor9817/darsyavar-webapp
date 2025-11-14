@@ -927,7 +927,7 @@ input[type="number"] {
 }
 
 /* Row 4 : Question-Box */
-.exercise__question-box {
+.question-card {
   position: relative;
   border: 2px solid black;
   border-top: none;
@@ -941,7 +941,7 @@ input[type="number"] {
   min-height: 120px;
 }
 
-.open .exercise__question-box {
+.open .question-card {
   border-bottom-left-radius: 6px;
 }
 
