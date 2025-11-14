@@ -551,16 +551,16 @@ li.chapter:last-of-type {
 }
 
 /* hide spinner For Chrome, Safari, and newer versions of Edge */
-input[type="number"]::-webkit-inner-spin-button,
+/* input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
+} */
 
 /* For Firefox */
-input[type="number"] {
+/* input[type="number"] {
   -moz-appearance: textfield;
-}
+} */
 
 #PageInputRange {
   width: 200px;
@@ -1223,7 +1223,7 @@ li.feedback-msg-pop-in {
 /* Row 6 : Answer Box */
 .exercise__answer-box {
   border: 2px solid black;
-  border-radius: 16px 6px 30px 30px;
+  border-radius: 16px 6px 28px 28px;
   margin-bottom: 16px;
   line-height: 1.6;
   text-align: justify;
