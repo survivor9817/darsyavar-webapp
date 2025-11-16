@@ -11,34 +11,6 @@ const Quiz = () => {
     Source: "",
   });
 
-  const showLevel = filtersData.Where !== "";
-  const showSource = filtersData.Level !== "";
-  const showBtn = filtersData.Source !== "";
-
-  const filterHeightStyle = {
-    // first: "116px",
-    Where: "200px",
-    Level: "286px",
-    Source: "316px",
-  };
-
-  function getHeight() {
-    if (showLevel && showSource && showBtn) {
-      return filterHeightStyle.Source;
-    } else if (showLevel && showSource) {
-      return filterHeightStyle.Level;
-    } else if (showLevel) {
-      return filterHeightStyle.Where;
-    }
-  }
-
-  function onFilterChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    const value = event.target.value;
-    const id = event.target.id;
-    setFiltersData({ ...filtersData, [id]: value });
-    console.log(filtersData);
-  }
-
   function resetFilters() {
     setFiltersData({
       Where: "",
@@ -52,15 +24,40 @@ const Quiz = () => {
     resetFilters();
   }, [currentBook]);
 
+  function onFilterChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    const value = event.target.value;
+    const id = event.target.id;
+    setFiltersData({ ...filtersData, [id]: value });
+    console.log(filtersData);
+  }
+
+  // progresive disclosure logic
+  const showLevel = filtersData.Where !== "";
+  const showSource = filtersData.Level !== "";
+  const showBtn = filtersData.Source !== "";
+  const filterHeights = {
+    // first: "116px",
+    Where: "200px",
+    Level: "286px",
+    Source: "316px",
+  };
+
+  function getHeight() {
+    if (showLevel && showSource && showBtn) {
+      return filterHeights.Source;
+    } else if (showLevel && showSource) {
+      return filterHeights.Level;
+    } else if (showLevel) {
+      return filterHeights.Where;
+    }
+  }
+
   const [quizStatus, setQuizStatus] = useState("off");
-  // const [quiz, setQuiz] = useState("off");
+  // true or false or on or off
 
   function startQuiz(formData: FormData) {
     const filters = Object.fromEntries(formData);
     console.log(filters);
-    console.log(quizStatus);
-    // const newQuiz = new Exercise(bookName, filters, exerciseData);
-    // setQuiz(newQuiz);
     setQuizStatus("in-progress");
     resetFilters();
   }
@@ -69,7 +66,6 @@ const Quiz = () => {
     <>
       <div id="Quiz" className="tab-container">
         {/* FilterView */}
-
         {quizStatus === "off" ? (
           <form className="filter-section" action={startQuiz}>
             <div className="quiz-filters" style={{ height: getHeight() }}>
@@ -98,7 +94,7 @@ const Quiz = () => {
               />
             </div>
             <div className={`btn-container ${showBtn ? "btn-visible" : null}`}>
-              <button className="start-exercise-btn">
+              <button type="submit" className="start-exercise-btn">
                 <span>شروع تمرین</span>
               </button>
             </div>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import FeedbackMsg from "./FeedbackMsg";
 import IconBtn from "./IconBtn";
 
@@ -6,10 +7,11 @@ const QuizView = () => {
   //   const index = quiz.observingQuestionIndex;
   //   const questionsCount = quiz.questionsCount;
 
-  //   const [isAnswerVisible, setAnswerVisible] = useState(false);
-  //   const toggleAnswer = () => setAnswerVisible((prev) => !prev);
-  //   const hideAnswer = () => setAnswerVisible(false);
+  const [isAnswerVisible, setAnswerVisible] = useState(false);
+  const toggleAnswer = () => setAnswerVisible((prev) => !prev);
+  const hideAnswer = () => setAnswerVisible(false);
 
+  console.log(isAnswerVisible);
   //   const {
   //     // id,
   //     bookName,
@@ -50,8 +52,7 @@ const QuizView = () => {
     <>
       <div
         id="ExercisesContainer"
-        // className={`exercises-container ${isAnswerVisible ? "open" : null} `}
-        className={`exercises-container open`}
+        className={`exercises-container ${isAnswerVisible ? "open" : null}`}
       >
         {/* <!-- Row 1 : Navigation Buttons of Exercise Section --> */}
         <div className="exercise-navbar">
@@ -84,7 +85,7 @@ const QuizView = () => {
         {/* <!-- Row 3 : Exercise Number and Tags --> */}
         <div className="progress-wrapper">
           <div className="progress-container">
-            <div className="progress-bar" id="ProgressBar"></div>
+            <div className="progress-bar" id="ProgressBar" style={{ width: "300px" }}></div>
           </div>
         </div>
 
@@ -112,11 +113,7 @@ const QuizView = () => {
         {/* <!-- Row 5 : Middle Row : answerToggle-authorLink-userInputs --> */}
         <div className="exercise__middle-bar">
           <div className="toggle-author-container">
-            <button
-              id="ShowAnswerBtn"
-              className="btn--show-answer"
-              // onClick={toggleAnswer}
-            ></button>
+            <button id="ShowAnswerBtn" className="btn--show-answer" onClick={toggleAnswer}></button>
             <div className="exercise-author">
               <i className="msr"> draft_orders </i>
               <span id="AuthorFullName">
