@@ -1008,24 +1008,24 @@ li.feedback-msg-pop-in {
   margin-right: 8px;
 }
 
-.correct {
+.feedback-msg-correct {
   background-color: #4caf50;
 }
 
-.incorrect {
+.feedback-msg-incorrect {
   background-color: #f44336;
 }
 
-.like {
+.feedback-msg-like {
   background-color: #ff69b4;
 }
 
-.star {
+.feedback-msg-star {
   background-color: #ffd700;
   color: black;
 }
 
-.report {
+.feedback-msg-report {
   background-color: #ff8c00;
 }
 
@@ -1150,7 +1150,7 @@ li.feedback-msg-pop-in {
   transform: translateX(105%);
 }
 
-.exercise-feedback-btns {
+.quiz-feedback-btns {
   flex-shrink: 0;
   display: flex;
   justify-content: space-around;
@@ -1162,17 +1162,17 @@ li.feedback-msg-pop-in {
 }
 
 @media screen and (max-width: 735px) {
-  .exercise-feedback-btns {
+  .quiz-feedback-btns {
     width: 100%;
   }
 }
 
-.open .exercise-feedback-btns {
+.open .quiz-feedback-btns {
   transform: translateX(100%);
 }
 
 /* exercise option buttons */
-.exercise-feedback-btns button {
+.quiz-feedback-btns button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1186,7 +1186,7 @@ li.feedback-msg-pop-in {
     transform: scale(1.1); 
 } */
 
-.exercise-feedback-btns i {
+.quiz-feedback-btns i {
   color: black;
 }
 

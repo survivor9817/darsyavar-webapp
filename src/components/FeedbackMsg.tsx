@@ -3,11 +3,12 @@ type Props = {
   icon: string;
   label: string;
   onClick?: () => void;
+  ref?: React.RefObject<HTMLLIElement | null>;
 };
 
-const FeedbackMsg = ({ icon, label, className }: Props) => {
+const FeedbackMsg = ({ icon, label, className, ref }: Props) => {
   return (
-    <li className={`feedback-msg ${className}`}>
+    <li id={`id-${className}`} className={`feedback-msg feedback-msg-${className}`} ref={ref}>
       <i className="msr"> {icon} </i>
       <span> {label} </span>
     </li>
