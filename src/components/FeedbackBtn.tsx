@@ -1,25 +1,13 @@
-import { useState } from "react";
-
-interface Props {
+type Props = {
   className: string;
   icon: string;
   onClick?: () => void;
-  msgRef?: React.RefObject<HTMLLIElement | null>;
-}
+  isOn: boolean;
+};
 
-const FeedbackBtn = ({ className, icon, onClick, msgRef }: Props) => {
-  const [isFilled, setIsFilled] = useState(false);
-
-  function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
-    // تغییر وضعیت filled
-    setIsFilled((prev) => !prev);
-    if (msgRef?.current) {
-      msgRef.current.classList.add("show");
-    }
-  }
-
+const FeedbackBtn = ({ className, icon, onClick, isOn }: Props) => {
   return (
-    <button className={`btn--${className} ${isFilled ? "filled" : ""}`} onClick={handleClick}>
+    <button className={`btn--${className} ${isOn ? "filled" : ""}`} onClick={onClick}>
       <i className="msr icon-btn"> {icon} </i>
     </button>
   );

@@ -1,7 +1,9 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import FeedbackMsg from "./FeedbackMsg";
 import IconBtn from "./IconBtn";
 import FeedbackBtn from "./FeedbackBtn";
+import { feedbackItems } from "../data/feedbackData";
+// baa data pishfarz anjam midim badesh useefect mikonim
 
 const QuizView = () => {
   //   const questionObj = quiz.questions[quiz.observingQuestionID];
@@ -10,130 +12,64 @@ const QuizView = () => {
 
   const [isAnswerVisible, setAnswerVisible] = useState(false);
   const toggleAnswer = () => setAnswerVisible((prev) => !prev);
-  const hideAnswer = () => setAnswerVisible(false);
+  // const hideAnswer = () => setAnswerVisible(false);
 
-  const feedbackItems = [
-    {
-      id: "correct",
-      label: "درست گفتم!",
-      icon: "check_circle",
-      className: "correct",
-      ref: useRef<HTMLLIElement>(null),
-    },
-    {
-      id: "incorrect",
-      label: "اشتباه گفتم!",
-      icon: "cancel",
-      className: "incorrect",
-      ref: useRef<HTMLLIElement>(null),
-    },
-    {
-      id: "like",
-      label: "سؤال قشنگیه!",
-      icon: "favorite",
-      className: "like",
-      ref: useRef<HTMLLIElement>(null),
-    },
-    {
-      id: "star",
-      label: "سؤال مهمیه!",
-      icon: "stars",
-      className: "star",
-      ref: useRef<HTMLLIElement>(null),
-    },
-    {
-      id: "report",
-      label: "ایراد داره!",
-      icon: "error",
-      className: "report",
-      ref: useRef<HTMLLIElement>(null),
-    },
-  ];
+  const [feedBackData, setFeedBackData] = useState(feedbackItems);
 
-  const [btnState, setBtnState] = useState({
-    correct: false,
-    incorrect: false,
-    like: false,
-    star: false,
-    report: false,
-  });
-
-  function toggleBtn(feedbackName: keyof typeof btnState) {
-    setBtnState((prev) => ({
-      ...prev,
-      [feedbackName]: !prev[feedbackName],
-    }));
+  function toggleBtn(feedbackID: string) {
+    const updatedFeedback = feedBackData.map((item) => {
+      if (item.id === feedbackID) {
+        return { ...item, isOn: !item.isOn };
+      } else {
+        return item;
+      }
+    });
+    setFeedBackData(updatedFeedback);
   }
 
   function markCorrect() {
-    setBtnState((prev) => ({
-      ...prev,
-      correct: !prev.correct,
-      incorrect: false,
-    }));
+    const updatedFeedback = feedBackData.map((item) => {
+      if (item.id === "correct") {
+        return { ...item, isOn: !item.isOn };
+      } else if (item.id === "incorrect") {
+        return { ...item, isOn: false };
+      } else {
+        return item;
+      }
+    });
+    setFeedBackData(updatedFeedback);
   }
 
   function markIncorrect() {
-    setBtnState((prev) => ({
-      ...prev,
-      incorrect: !prev.incorrect,
-      correct: false,
-    }));
+    const updatedFeedback = feedBackData.map((item) => {
+      if (item.id === "incorrect") {
+        return { ...item, isOn: !item.isOn };
+      } else if (item.id === "correct") {
+        return { ...item, isOn: false };
+      } else {
+        return item;
+      }
+    });
+    setFeedBackData(updatedFeedback);
   }
 
-  function updateFeedbackObj(name: keyof typeof btnState) {
-    if (name === "correct") {
+  function hideAllMsgs() {
+    const msgs = document.querySelectorAll(".feedback-msg-pop-in");
+    msgs.forEach((msg) => msg.classList.remove("feedback-msg-pop-in"));
+  }
+
+  function updateFeedback(id: string) {
+    hideAllMsgs();
+    if (id === "correct") {
       markCorrect();
-    } else if (name === "incorrect") {
+    } else if (id === "incorrect") {
       markIncorrect();
     } else {
-      toggleBtn(name);
+      toggleBtn(id);
     }
   }
 
-  // mitoonim be har feedbackMsg yek state daakheli bedim ke az biroon
-  // props state migire vali az dakhel ham state darooni daare va khodesh
-  // state daroonish ro
-  // na tamame dg. estate btn modiriat beshe, feedbackam ref esh ro pasdadim be hamon btn
-  // khode btn mitone feedbackmsg ro neshon bede va bardaare. mimoone daraavordane prevMsg.
-  // man migam ye ref besaazim, pas bedim be hame dokme haa. ke agha in prevmsg e.
-
-  console.log(isAnswerVisible);
-  //   const {
-  //     // id,
-  //     bookName,
-  //     question,
-  //     // answerKey,
-  //     descriptiveAnswer,
-  //     author,
-  //     source,
-  //     date,
-  //     score,
-  //     tags,
-  //     refs,
-  //   } = questionObj;
-
-  //   const currentIndex = toFaNums(index + 1);
-  //   const total = toFaNums(questionsCount);
-
-  //   const renderedTags = tags.map((tag) => (
-  //     <li key={tag} className="tag">
-  //       {tag}
-  //     </li>
-  //   ));
-
-  //   const rendenedRefPages = Object.entries(refs).map(([refPage, { start, end }], index) => (
-  //     <li key={index} className="ref-page" data-ref-page={toFaNums(+refPage)}>
-  //       {toFaNums(+refPage)}
-  //     </li>
-  //   ));
-
-  //   const refsList = () => (
-  //     <li className="ref-book horizontally-scrollable">
-  //       <span className="book">${bookName}</span>
-  //       <ul className="pages horizontally-scrollable">{rendenedRefPages}</ul>
-  //     </li>
-  //   );
+  console.log("feedback data:", feedBackData);
 
   return (
     <>
@@ -172,7 +108,7 @@ const QuizView = () => {
         {/* <!-- Row 3 : Exercise Number and Tags --> */}
         <div className="progress-wrapper">
           <div className="progress-container">
-            <div className="progress-bar" id="ProgressBar" style={{ width: "300px" }}></div>
+            <div className="progress-bar" id="ProgressBar" style={{ width: "30px" }}></div>
           </div>
         </div>
 
@@ -188,13 +124,13 @@ const QuizView = () => {
           {/* <!-- user feedbacks --> */}
           <div className="feedback-msg-container">
             <ul className="feedback-msg-list">
-              {feedbackItems.map((feedbackItem) => (
+              {feedBackData.map((item) => (
                 <FeedbackMsg
-                  key={feedbackItem.id}
-                  label={feedbackItem.label}
-                  icon={feedbackItem.icon}
-                  className={feedbackItem.className}
-                  ref={feedbackItem.ref}
+                  key={item.id}
+                  label={item.label}
+                  icon={item.icon}
+                  className={item.className}
+                  isOn={item.isOn}
                 />
               ))}
             </ul>
@@ -219,12 +155,13 @@ const QuizView = () => {
               {"نمره تاریخ منبع"}
             </div>
             <div className="quiz-feedback-btns">
-              {feedbackItems.map((feedbackItem) => (
+              {feedBackData.map((item) => (
                 <FeedbackBtn
-                  key={feedbackItem.id}
-                  icon={feedbackItem.icon}
-                  className={feedbackItem.className}
-                  msgRef={feedbackItem.ref}
+                  key={item.id}
+                  icon={item.icon}
+                  className={item.className}
+                  isOn={item.isOn}
+                  onClick={() => updateFeedback(item.id)}
                 />
               ))}
             </div>
