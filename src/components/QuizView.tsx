@@ -14,62 +14,34 @@ const QuizView = () => {
   const toggleAnswer = () => setAnswerVisible((prev) => !prev);
   // const hideAnswer = () => setAnswerVisible(false);
 
+  // mitoone ye hooke sefareshi bashe
   const [feedBackData, setFeedBackData] = useState(feedbackItems);
 
-  function toggleBtn(feedbackID: string) {
-    const updatedFeedback = feedBackData.map((item) => {
-      if (item.id === feedbackID) {
-        return { ...item, isOn: !item.isOn };
-      } else {
-        return item;
-      }
-    });
-    setFeedBackData(updatedFeedback);
-  }
-
-  function markCorrect() {
-    const updatedFeedback = feedBackData.map((item) => {
-      if (item.id === "correct") {
-        return { ...item, isOn: !item.isOn };
-      } else if (item.id === "incorrect") {
-        return { ...item, isOn: false };
-      } else {
-        return item;
-      }
-    });
-    setFeedBackData(updatedFeedback);
-  }
-
-  function markIncorrect() {
-    const updatedFeedback = feedBackData.map((item) => {
-      if (item.id === "incorrect") {
-        return { ...item, isOn: !item.isOn };
-      } else if (item.id === "correct") {
-        return { ...item, isOn: false };
-      } else {
-        return item;
-      }
-    });
-    setFeedBackData(updatedFeedback);
-  }
-
-  function hideAllMsgs() {
+  // in logic kheyli react pasand nist va movaghate
+  function hidePrevMsg(id: string) {
+    if (feedBackData.find((item) => item.id === id)?.isOn) return;
     const msgs = document.querySelectorAll(".feedback-msg-pop-in");
     msgs.forEach((msg) => msg.classList.remove("feedback-msg-pop-in"));
   }
 
   function updateFeedback(id: string) {
-    hideAllMsgs();
-    if (id === "correct") {
-      markCorrect();
-    } else if (id === "incorrect") {
-      markIncorrect();
-    } else {
-      toggleBtn(id);
-    }
+    hidePrevMsg(id);
+    setFeedBackData((prevData) =>
+      prevData.map((item) => {
+        if (item.id === id) return { ...item, isOn: !item.isOn };
+        const clickedOnCorrect = id === "correct" && item.id === "incorrect";
+        const clickedOnIncorrect = id === "incorrect" && item.id === "correct";
+        if (clickedOnCorrect || clickedOnIncorrect) return { ...item, isOn: false };
+        return item;
+      })
+    );
   }
 
-  console.log("feedback data:", feedBackData);
+  const btnsState = feedBackData.reduce<Record<string, boolean>>((acc, item) => {
+    acc[item.id] = item.isOn;
+    return acc;
+  }, {});
+  console.log("Buttons State:", btnsState);
 
   return (
     <>

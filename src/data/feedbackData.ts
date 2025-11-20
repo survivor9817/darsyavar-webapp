@@ -5,7 +5,6 @@ export const feedbackItems = [
     icon: "check_circle",
     className: "correct",
     isOn: false,
-    isMsgVisible: false,
   },
   {
     id: "incorrect",
@@ -13,7 +12,6 @@ export const feedbackItems = [
     icon: "cancel",
     className: "incorrect",
     isOn: false,
-    isMsgVisible: false,
   },
   {
     id: "like",
@@ -21,7 +19,6 @@ export const feedbackItems = [
     icon: "favorite",
     className: "like",
     isOn: false,
-    isMsgVisible: false,
   },
   {
     id: "star",
@@ -29,7 +26,6 @@ export const feedbackItems = [
     icon: "stars",
     className: "star",
     isOn: false,
-    isMsgVisible: false,
   },
   {
     id: "report",
@@ -37,6 +33,5 @@ export const feedbackItems = [
     icon: "error",
     className: "report",
     isOn: false,
-    isMsgVisible: false,
   },
 ];
