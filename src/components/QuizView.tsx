@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FeedbackMsg from "./FeedbackMsg";
 import IconBtn from "./IconBtn";
 import FeedbackBtn from "./FeedbackBtn";
-import { feedbackItems } from "../data/feedbackData";
-// baa data pishfarz anjam midim badesh useefect mikonim
+import { feedbackBtnData, feedbackMsgData } from "../data/feedbackData";
 
 const QuizView = () => {
   //   const questionObj = quiz.questions[quiz.observingQuestionID];
@@ -15,32 +14,99 @@ const QuizView = () => {
   // const hideAnswer = () => setAnswerVisible(false);
 
   // mitoone ye hooke sefareshi bashe
-  const [feedBackData, setFeedBackData] = useState(feedbackItems);
+  const [btnsMeta, setBtnsMeta] = useState(feedbackBtnData);
+  const [msgsMeta, setMsgsMeta] = useState(feedbackMsgData);
 
-  // in logic kheyli react pasand nist va movaghate
-  function hidePrevMsg(id: string) {
-    if (feedBackData.find((item) => item.id === id)?.isOn) return;
-    const msgs = document.querySelectorAll(".feedback-msg-pop-in");
-    msgs.forEach((msg) => msg.classList.remove("feedback-msg-pop-in"));
-  }
+  function handleBtn(id: string, state: boolean) {
+    setBtnsMeta((prev) => {
+      return prev.map((item) => {
+        if (item.id === id) {
+          return { ...item, isOn: state };
+        }
 
-  function updateFeedback(id: string) {
-    hidePrevMsg(id);
-    setFeedBackData((prevData) =>
-      prevData.map((item) => {
-        if (item.id === id) return { ...item, isOn: !item.isOn };
         const clickedOnCorrect = id === "correct" && item.id === "incorrect";
         const clickedOnIncorrect = id === "incorrect" && item.id === "correct";
-        if (clickedOnCorrect || clickedOnIncorrect) return { ...item, isOn: false };
+        if (clickedOnCorrect || clickedOnIncorrect) {
+          return { ...item, isOn: false };
+        }
+
         return item;
-      })
-    );
+      });
+    });
   }
 
-  const btnsState = feedBackData.reduce<Record<string, boolean>>((acc, item) => {
+  function handleMsg(id: string, state: boolean) {
+    setMsgsMeta((prev) => {
+      return prev.map((item) => {
+        if (item.id === id) {
+          return { ...item, isOn: state };
+        }
+
+        const clickedOnCorrect = id === "correct" && item.id === "incorrect";
+        const clickedOnIncorrect = id === "incorrect" && item.id === "correct";
+        if (clickedOnCorrect || clickedOnIncorrect) {
+          return { ...item, isOn: false };
+        }
+
+        return item;
+      });
+    });
+  }
+
+  const prevTimeout = useRef<number | null>(null);
+
+  function updateFeedback(id: string) {
+    const isClickedBtnOn = btnsMeta.find((item) => item.id === id)?.isOn;
+    const isClickedMsgOn = msgsMeta.find((item) => item.id === id)?.isOn;
+    const isOtherMsgOn = msgsMeta.some((item) => item.id !== id && item.isOn);
+    const otherOnMsgID = isOtherMsgOn && msgsMeta.find((item) => item.isOn)?.id;
+
+    if (!isClickedBtnOn && !isOtherMsgOn) {
+      handleBtn(id, true);
+      handleMsg(id, true);
+      prevTimeout.current = setTimeout(() => {
+        handleMsg(id, false);
+      }, 1500);
+    }
+
+    if (!isClickedBtnOn && isOtherMsgOn) {
+      handleBtn(id, true);
+
+      if (!otherOnMsgID) return;
+      handleMsg(otherOnMsgID, false);
+
+      if (prevTimeout.current !== null) {
+        clearTimeout(prevTimeout.current);
+        prevTimeout.current = null;
+      }
+
+      handleMsg(id, true);
+      prevTimeout.current = setTimeout(() => {
+        handleMsg(id, false);
+      }, 1500);
+    }
+
+    if (isClickedBtnOn) {
+      handleBtn(id, false);
+    }
+
+    if (isClickedBtnOn && isClickedMsgOn) {
+      handleBtn(id, false);
+
+      handleMsg(id, false);
+      if (prevTimeout.current !== null) {
+        clearTimeout(prevTimeout.current);
+        prevTimeout.current = null;
+      }
+    }
+  }
+
+  // inja feedbacke har soal ro dar har click mitonim hesab konim
+  const btnsState = btnsMeta.reduce<Record<string, boolean>>((acc, item) => {
     acc[item.id] = item.isOn;
     return acc;
   }, {});
+
   console.log("Buttons State:", btnsState);
 
   return (
@@ -96,7 +162,7 @@ const QuizView = () => {
           {/* <!-- user feedbacks --> */}
           <div className="feedback-msg-container">
             <ul className="feedback-msg-list">
-              {feedBackData.map((item) => (
+              {msgsMeta.map((item) => (
                 <FeedbackMsg
                   key={item.id}
                   label={item.label}
@@ -127,7 +193,7 @@ const QuizView = () => {
               {"نمره تاریخ منبع"}
             </div>
             <div className="quiz-feedback-btns">
-              {feedBackData.map((item) => (
+              {btnsMeta.map((item) => (
                 <FeedbackBtn
                   key={item.id}
                   icon={item.icon}

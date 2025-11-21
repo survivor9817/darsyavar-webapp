@@ -1,5 +1,3 @@
-import { useEffect, useRef, useState } from "react";
-
 type Props = {
   icon: string;
   label: string;
@@ -8,35 +6,7 @@ type Props = {
 };
 
 const FeedbackMsg = ({ icon, label, className, isOn }: Props) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const popInClass = isVisible ? "feedback-msg-pop-in" : "";
-
-  const prevTimeout = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (prevTimeout.current !== null) {
-      clearTimeout(prevTimeout.current);
-      prevTimeout.current = null;
-    }
-
-    if (!isOn) {
-      setIsVisible(false);
-      return;
-    }
-
-    setIsVisible(true);
-    prevTimeout.current = window.setTimeout(() => {
-      setIsVisible(false);
-      prevTimeout.current = null;
-    }, 1500);
-
-    return () => {
-      if (prevTimeout.current !== null) {
-        clearTimeout(prevTimeout.current);
-        prevTimeout.current = null;
-      }
-    };
-  }, [isOn]);
+  const popInClass = isOn ? "feedback-msg-pop-in" : "";
 
   return (
     <li id={`id-${className}`} className={`feedback-msg feedback-msg-${className} ${popInClass}`}>
