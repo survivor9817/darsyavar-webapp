@@ -99,6 +99,28 @@ const QuizView = () => {
     return acc;
   }, {});
 
+  const serverSavedFeedback = {
+    correct: false,
+    incorrect: false,
+    like: false,
+    star: true,
+    report: true,
+  };
+
+  useEffect(
+    () => {
+      Object.entries(serverSavedFeedback).forEach(([id, isOn]) => {
+        handleBtn(id, isOn);
+      });
+    },
+    [
+      /** question current number
+       * bayad code baala toye time out ham bashe
+       * bekhaatere moddate transition ui dokme haa
+       */
+    ]
+  );
+
   console.log("Buttons State:", btnsState);
 
   return (
