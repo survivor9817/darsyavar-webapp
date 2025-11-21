@@ -20,16 +20,10 @@ const QuizView = () => {
   function handleBtn(id: string, state: boolean) {
     setBtnsMeta((prev) => {
       return prev.map((item) => {
-        if (item.id === id) {
-          return { ...item, isOn: state };
-        }
-
+        if (item.id === id) return { ...item, isOn: state };
         const clickedOnCorrect = id === "correct" && item.id === "incorrect";
         const clickedOnIncorrect = id === "incorrect" && item.id === "correct";
-        if (clickedOnCorrect || clickedOnIncorrect) {
-          return { ...item, isOn: false };
-        }
-
+        if (clickedOnCorrect || clickedOnIncorrect) return { ...item, isOn: false };
         return item;
       });
     });
@@ -38,28 +32,44 @@ const QuizView = () => {
   function handleMsg(id: string, state: boolean) {
     setMsgsMeta((prev) => {
       return prev.map((item) => {
-        if (item.id === id) {
-          return { ...item, isOn: state };
-        }
-
+        if (item.id === id) return { ...item, isOn: state };
         const clickedOnCorrect = id === "correct" && item.id === "incorrect";
         const clickedOnIncorrect = id === "incorrect" && item.id === "correct";
-        if (clickedOnCorrect || clickedOnIncorrect) {
-          return { ...item, isOn: false };
-        }
-
+        if (clickedOnCorrect || clickedOnIncorrect) return { ...item, isOn: false };
         return item;
       });
     });
   }
 
   const prevTimeout = useRef<number | null>(null);
+  function clearPrevMsgTimeout() {
+    if (prevTimeout.current !== null) {
+      clearTimeout(prevTimeout.current);
+      prevTimeout.current = null;
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      clearPrevMsgTimeout();
+    };
+  }, []);
 
   function updateFeedback(id: string) {
     const isClickedBtnOn = btnsMeta.find((item) => item.id === id)?.isOn;
     const isClickedMsgOn = msgsMeta.find((item) => item.id === id)?.isOn;
     const isOtherMsgOn = msgsMeta.some((item) => item.id !== id && item.isOn);
     const otherOnMsgID = isOtherMsgOn && msgsMeta.find((item) => item.isOn)?.id;
+
+    if (isClickedBtnOn) {
+      handleBtn(id, false);
+    }
+
+    if (isClickedBtnOn && isClickedMsgOn) {
+      handleBtn(id, false);
+      clearPrevMsgTimeout();
+      handleMsg(id, false);
+    }
 
     if (!isClickedBtnOn && !isOtherMsgOn) {
       handleBtn(id, true);
@@ -73,31 +83,13 @@ const QuizView = () => {
       handleBtn(id, true);
 
       if (!otherOnMsgID) return;
+      clearPrevMsgTimeout();
       handleMsg(otherOnMsgID, false);
-
-      if (prevTimeout.current !== null) {
-        clearTimeout(prevTimeout.current);
-        prevTimeout.current = null;
-      }
 
       handleMsg(id, true);
       prevTimeout.current = setTimeout(() => {
         handleMsg(id, false);
       }, 1500);
-    }
-
-    if (isClickedBtnOn) {
-      handleBtn(id, false);
-    }
-
-    if (isClickedBtnOn && isClickedMsgOn) {
-      handleBtn(id, false);
-
-      handleMsg(id, false);
-      if (prevTimeout.current !== null) {
-        clearTimeout(prevTimeout.current);
-        prevTimeout.current = null;
-      }
     }
   }
 
