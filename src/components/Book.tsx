@@ -9,7 +9,7 @@ const Book = () => {
   const { currentBook, currentPage, setCurrentPage } = useContext(BookContext);
 
   function goToPage(pageNumber: number) {
-    if (!pageNumber || isNaN(pageNumber)) return;
+    if (!pageNumber || isNaN(pageNumber) || pageNumber > lastPage) return;
     setCurrentPage(pageNumber);
     // you can useRef instead
     const pageElement = document.getElementById(`page${pageNumber}`);

@@ -35,16 +35,12 @@ const Fehrest = ({ onClose, style }: Props) => {
 
     const pagesToWatch = document.querySelectorAll(".book-section .page");
     pagesToWatch.forEach((page) => {
-      if (observerRef.current) {
-        observerRef.current.observe(page);
-      }
+      if (observerRef.current) observerRef.current.observe(page);
     });
 
     return () => {
       if (observerRef.current) {
-        pagesToWatch.forEach((page) => {
-          observerRef.current?.unobserve(page);
-        });
+        pagesToWatch.forEach((page) => observerRef.current?.unobserve(page));
         observerRef.current.disconnect();
         observerRef.current = null;
       }

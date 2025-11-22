@@ -3,6 +3,8 @@ import FeedbackMsg from "./FeedbackMsg";
 import IconBtn from "./IconBtn";
 import FeedbackBtn from "./FeedbackBtn";
 import { feedbackBtnData, feedbackMsgData } from "../data/feedbackData";
+import { questionsData } from "../data/questionsData";
+import { toFaNums } from "../utils/toFaNums";
 
 const QuizView = () => {
   //   const questionObj = quiz.questions[quiz.observingQuestionID];
@@ -11,9 +13,49 @@ const QuizView = () => {
 
   const [isAnswerVisible, setAnswerVisible] = useState(false);
   const toggleAnswer = () => setAnswerVisible((prev) => !prev);
-  // const hideAnswer = () => setAnswerVisible(false);
+  const hideAnswer = () => setAnswerVisible(false);
 
-  // mitoone ye hooke sefareshi bashe
+  const [currQuestionIndex, setCurrQuestionNumber] = useState(0);
+  const lastQuestionIndex = questionsData.length - 1;
+  const progressBarLength = ((currQuestionIndex + 1) / (lastQuestionIndex + 1)) * 100;
+
+  function goToQuestion(number: number) {
+    if (/*!number || */ isNaN(number) || number > lastQuestionIndex) return;
+    hideAnswer();
+    setCurrQuestionNumber(number);
+  }
+
+  function goToPrevQuestion() {
+    hideAnswer();
+    const newQuestionIndex = Math.max(0, +currQuestionIndex - 1);
+    goToQuestion(newQuestionIndex);
+  }
+
+  function goToNextQuestion() {
+    hideAnswer();
+    const newQuestionNumber = Math.min(+lastQuestionIndex, +currQuestionIndex + 1);
+    goToQuestion(newQuestionNumber);
+  }
+
+  console.log(currQuestionIndex);
+
+  const {
+    // id,
+    // bookName,
+    question,
+    // answerKey,
+    descriptiveAnswer,
+    author,
+    source,
+    date,
+    score,
+    tags,
+    // refs,
+  } = questionsData[currQuestionIndex];
+
+  console.log(question);
+
+  // btns and msgs handlers and logic #########################################
   const [btnsMeta, setBtnsMeta] = useState(feedbackBtnData);
   const [msgsMeta, setMsgsMeta] = useState(feedbackMsgData);
 
@@ -41,11 +83,11 @@ const QuizView = () => {
     });
   }
 
-  const prevTimeout = useRef<number | null>(null);
+  const prevMsgTimeout = useRef<number | null>(null);
   function clearPrevMsgTimeout() {
-    if (prevTimeout.current !== null) {
-      clearTimeout(prevTimeout.current);
-      prevTimeout.current = null;
+    if (prevMsgTimeout.current !== null) {
+      clearTimeout(prevMsgTimeout.current);
+      prevMsgTimeout.current = null;
     }
   }
 
@@ -60,6 +102,7 @@ const QuizView = () => {
     const isClickedMsgOn = msgsMeta.find((item) => item.id === id)?.isOn;
     const isOtherMsgOn = msgsMeta.some((item) => item.id !== id && item.isOn);
     const otherOnMsgID = isOtherMsgOn && msgsMeta.find((item) => item.isOn)?.id;
+    // const noMsgsOn = !msgsMeta.some((item) => item.isOn);
 
     if (isClickedBtnOn) {
       handleBtn(id, false);
@@ -74,24 +117,23 @@ const QuizView = () => {
     if (!isClickedBtnOn && !isOtherMsgOn) {
       handleBtn(id, true);
       handleMsg(id, true);
-      prevTimeout.current = setTimeout(() => {
+      prevMsgTimeout.current = setTimeout(() => {
         handleMsg(id, false);
       }, 1500);
     }
 
     if (!isClickedBtnOn && isOtherMsgOn) {
       handleBtn(id, true);
-
       if (!otherOnMsgID) return;
       clearPrevMsgTimeout();
       handleMsg(otherOnMsgID, false);
-
       handleMsg(id, true);
-      prevTimeout.current = setTimeout(() => {
+      prevMsgTimeout.current = setTimeout(() => {
         handleMsg(id, false);
       }, 1500);
     }
   }
+  // #########################################################################
 
   // inja feedbacke har soal ro dar har click mitonim hesab konim
   const btnsState = btnsMeta.reduce<Record<string, boolean>>((acc, item) => {
@@ -107,6 +149,7 @@ const QuizView = () => {
     report: true,
   };
 
+  // inject buttons data from server
   useEffect(
     () => {
       Object.entries(serverSavedFeedback).forEach(([id, isOn]) => {
@@ -134,25 +177,30 @@ const QuizView = () => {
           <IconBtn
             className={"btn--exercise-prev"}
             icon={"arrow_circle_right"}
-            // onClick={quiz.goToNextQuestion}
+            onClick={goToPrevQuestion}
           />
           <IconBtn
             className={"btn--exercise-next"}
             icon={"arrow_circle_left"}
-            // onClick={gonext}
+            onClick={goToNextQuestion}
           />
         </div>
 
         {/* <!-- Row 2 : Exercise Number and Tags --> */}
         <div className="number-tags-container">
           <div className="exercise-number">
-            {/* {`تمرین شماره ${currentIndex} از ${total}`} */}
-            {"شماره تمرین"}
+            {/* {"شماره تمرین"} */}
+            {`تمرین شماره ${toFaNums(currQuestionIndex + 1)} از ${toFaNums(lastQuestionIndex + 1)}`}
           </div>
           <div className="tags-container">
             <ul className="tags-list">
+              {/* {"تگ ها"} */}
               {/* {renderedTags} */}
-              {"تگ ها"}
+              {tags.map((tag) => (
+                <li key={tag} className="tag">
+                  {tag}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -160,17 +208,18 @@ const QuizView = () => {
         {/* <!-- Row 3 : Exercise Number and Tags --> */}
         <div className="progress-wrapper">
           <div className="progress-container">
-            <div className="progress-bar" id="ProgressBar" style={{ width: "30px" }}></div>
+            <div
+              className="progress-bar"
+              id="ProgressBar"
+              style={{ width: `${progressBarLength}%` }}
+            ></div>
           </div>
         </div>
 
         {/* <!-- Row 4 : Question Box --> */}
         <div className="question-card">
-          <div
-            className="question-container"
-            // dangerouslySetInnerHTML={{ __html: question }}
-          >
-            {"متن سوال"}
+          <div className="question-container" dangerouslySetInnerHTML={{ __html: question }}>
+            {/* {"متن سوال"} */}
           </div>
 
           {/* <!-- user feedbacks --> */}
@@ -196,15 +245,15 @@ const QuizView = () => {
             <div className="exercise-author">
               <i className="msr"> draft_orders </i>
               <span id="AuthorFullName">
-                {/* {author} */}
-                {"نویسنده"}
+                {/* {"نویسنده"} */}
+                {author}
               </span>
             </div>
           </div>
           <div className="details-inputBtns-container">
             <div className="exercise-details">
-              {/* {`${source} - ${date} - ${toFaNums(score)} نمره`} */}
-              {"نمره تاریخ منبع"}
+              {/* {"نمره تاریخ منبع"} */}
+              {`${source} - ${date} - ${toFaNums(score)} نمره`}
             </div>
             <div className="quiz-feedback-btns">
               {btnsMeta.map((item) => (
@@ -224,9 +273,9 @@ const QuizView = () => {
         <div className="exercise__answer-box">
           <div
             className="descriptive-answer"
-            // dangerouslySetInnerHTML={{ __html: descriptiveAnswer }}
+            dangerouslySetInnerHTML={{ __html: descriptiveAnswer }}
           >
-            {"متن جواب"}
+            {/* {"متن جواب"} */}
           </div>
           {/* <!-- Row 7 : References --> */}
           {/* <div className="exercise-bottom-bar">
