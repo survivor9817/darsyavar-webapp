@@ -2,42 +2,45 @@ import { useEffect, useRef, useState } from "react";
 import FeedbackMsg from "./FeedbackMsg";
 import IconBtn from "./IconBtn";
 import FeedbackBtn from "./FeedbackBtn";
+import { toFaNums } from "../utils/toFaNums";
 import { feedbackBtnData, feedbackMsgData } from "../data/feedbackData";
 import { questionsData } from "../data/questionsData";
-import { toFaNums } from "../utils/toFaNums";
 
 const QuizView = () => {
-  //   const questionObj = quiz.questions[quiz.observingQuestionID];
-  //   const index = quiz.observingQuestionIndex;
-  //   const questionsCount = quiz.questionsCount;
-
   const [isAnswerVisible, setAnswerVisible] = useState(false);
-  const toggleAnswer = () => setAnswerVisible((prev) => !prev);
-  const hideAnswer = () => setAnswerVisible(false);
 
-  const [currQuestionIndex, setCurrQuestionNumber] = useState(0);
+  function toggleAnswer() {
+    setAnswerVisible((prev) => !prev);
+  }
+
+  function hideAnswer() {
+    setAnswerVisible(false);
+  }
+
+  const [currQuestionIndex, setCurrQuestionIndex] = useState(0);
+
+  // fetch bayad bezanim ke in var haye badi moshakhas beshan
   const lastQuestionIndex = questionsData.length - 1;
   const progressBarLength = ((currQuestionIndex + 1) / (lastQuestionIndex + 1)) * 100;
 
-  function goToQuestion(number: number) {
-    if (/*!number || */ isNaN(number) || number > lastQuestionIndex) return;
+  useEffect(() => {
     hideAnswer();
-    setCurrQuestionNumber(number);
+  }, [currQuestionIndex]);
+
+  function goToQuestion(number: number) {
+    if (number < 0 || isNaN(number) || number > lastQuestionIndex) return;
+    setCurrQuestionIndex(number);
   }
 
   function goToPrevQuestion() {
-    hideAnswer();
     const newQuestionIndex = Math.max(0, +currQuestionIndex - 1);
     goToQuestion(newQuestionIndex);
   }
 
   function goToNextQuestion() {
-    hideAnswer();
     const newQuestionNumber = Math.min(+lastQuestionIndex, +currQuestionIndex + 1);
     goToQuestion(newQuestionNumber);
   }
-
-  console.log(currQuestionIndex);
 
   const {
     // id,
@@ -52,8 +55,6 @@ const QuizView = () => {
     tags,
     // refs,
   } = questionsData[currQuestionIndex];
-
-  console.log(question);
 
   // btns and msgs handlers and logic #########################################
   const [btnsMeta, setBtnsMeta] = useState(feedbackBtnData);
@@ -141,17 +142,17 @@ const QuizView = () => {
     return acc;
   }, {});
 
-  const serverSavedFeedback = {
-    correct: false,
-    incorrect: false,
-    like: false,
-    star: true,
-    report: true,
-  };
-
-  // inject buttons data from server
+  // fetch and inject buttons data from server
   useEffect(
     () => {
+      const serverSavedFeedback = {
+        correct: false,
+        incorrect: false,
+        like: false,
+        star: true,
+        report: true,
+      };
+
       Object.entries(serverSavedFeedback).forEach(([id, isOn]) => {
         handleBtn(id, isOn);
       });
@@ -175,19 +176,19 @@ const QuizView = () => {
         {/* <!-- Row 1 : Navigation Buttons of Exercise Section --> */}
         <div className="exercise-navbar">
           <IconBtn
-            className={"btn--exercise-prev"}
+            className={"btn--prev-question"}
             icon={"arrow_circle_right"}
             onClick={goToPrevQuestion}
           />
           <IconBtn
-            className={"btn--exercise-next"}
+            className={"btn--next-question"}
             icon={"arrow_circle_left"}
             onClick={goToNextQuestion}
           />
         </div>
 
         {/* <!-- Row 2 : Exercise Number and Tags --> */}
-        <div className="number-tags-container">
+        <div className="top-info-bar">
           <div className="exercise-number">
             {/* {"شماره تمرین"} */}
             {`تمرین شماره ${toFaNums(currQuestionIndex + 1)} از ${toFaNums(lastQuestionIndex + 1)}`}

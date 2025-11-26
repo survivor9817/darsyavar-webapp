@@ -781,8 +781,8 @@ input[type="number"]::-webkit-outer-spin-button {
   align-items: center;
 }
 
-.btn--exercise-prev,
-.btn--exercise-next {
+.btn--prev-question,
+.btn--next-question {
   all: unset;
   box-sizing: border-box;
   cursor: pointer;
@@ -829,7 +829,7 @@ input[type="number"]::-webkit-outer-spin-button {
 } */
 
 /* Row 2 : Exercise Number and Tags  */
-.number-tags-container {
+.top-info-bar {
   display: flex;
   align-items: center;
   border: 2px solid black;

@@ -5,7 +5,12 @@ import { BookContext } from "./Layout";
 import QuizView from "./QuizView";
 
 const Quiz = () => {
+  const { currentBook } = useContext(BookContext);
+
+  const [quizStatus, setQuizStatus] = useState("off");
+
   const [filtersData, setFiltersData] = useState({
+    Book: currentBook,
     Where: "",
     Level: "",
     Source: "",
@@ -13,13 +18,13 @@ const Quiz = () => {
 
   function resetFilters() {
     setFiltersData({
+      Book: currentBook,
       Where: "",
       Level: "",
       Source: "",
     });
   }
 
-  const { currentBook } = useContext(BookContext);
   useEffect(() => {
     resetFilters();
   }, [currentBook]);
@@ -31,7 +36,15 @@ const Quiz = () => {
     console.log(filtersData);
   }
 
-  // progresive disclosure logic
+  function startQuiz(formData: FormData) {
+    const filters = Object.fromEntries(formData);
+    console.log(filters);
+    console.log(filtersData);
+    setQuizStatus("in-progress");
+    resetFilters();
+  }
+
+  // progresive disclosure logic ##############################################
   const showLevel = filtersData.Where !== "";
   const showSource = filtersData.Level !== "";
   const showBtn = filtersData.Source !== "";
@@ -51,16 +64,7 @@ const Quiz = () => {
       return filterHeights.Where;
     }
   }
-
-  const [quizStatus, setQuizStatus] = useState("off");
-  // true or false or on or off
-
-  function startQuiz(formData: FormData) {
-    const filters = Object.fromEntries(formData);
-    console.log(filters);
-    setQuizStatus("in-progress");
-    resetFilters();
-  }
+  // ##########################################################################
 
   return (
     <>
