@@ -3,11 +3,25 @@ import FilterSelector from "./FilterSelector";
 import { options } from "../data/filterOptionsData";
 import { BookContext } from "./Layout";
 import QuizView from "./QuizView";
+import { requestedQuestionsIDs } from "../data/questionsData";
 
 const Quiz = () => {
   const { currentBook } = useContext(BookContext);
-
   const [quizStatus, setQuizStatus] = useState("off");
+  // const [session, setSession] = useState({
+  //   // sessionId: generateSessionId(),
+  //   sessionId: 1,
+  //   startTime: new Date(),
+  //   endTime: null,
+  //   status: "in-progress",
+  //   bookName: currentBook,
+  //   filters: { Book: currentBook, Where: "", Level: "", Source: "" },
+  //   currentQIndex: 0,
+  //   currentQID: requestedQuestionsIDs[this.currentQIndex].id,
+  //   questionsCount: requestedQuestionsIDs.length,
+  //   feedbackResults: {},
+  //   questionIDs: requestedQuestionsIDs,
+  // });
 
   const [filtersData, setFiltersData] = useState({
     Book: currentBook,

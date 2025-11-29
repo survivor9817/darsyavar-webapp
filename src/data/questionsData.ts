@@ -1,9 +1,38 @@
+export const requestedQuestionsIDs = [1, 2, 3];
+
+const serverSavedFeedback = [
+  {
+    id: 1,
+    correct: false,
+    incorrect: true,
+    like: false,
+    star: true,
+    report: false,
+  },
+  {
+    id: 2,
+    correct: false,
+    incorrect: false,
+    like: false,
+    star: true,
+    report: true,
+  },
+  {
+    id: 3,
+    correct: true,
+    incorrect: false,
+    like: false,
+    star: false,
+    report: true,
+  },
+];
+
 export const questionsData = [
   {
     id: 1,
     bookName: "زیست‌شناسی ۱",
-    Where: "۵. حس و حرکت",
-    Level: "2",
+    where: "۵. حس و حرکت",
+    level: "2",
     source: "کنکور سراسری",
     hasImg: false,
     question: `
@@ -95,8 +124,8 @@ export const questionsData = [
   {
     id: 2,
     bookName: "زیست‌شناسی ۱",
-    Where: "۵. حس و حرکت",
-    Level: "2",
+    where: "۵. حس و حرکت",
+    level: "2",
     source: "کنکور سراسری",
     hasImg: false,
     question: `
@@ -162,8 +191,8 @@ export const questionsData = [
   {
     id: 3,
     bookName: "زیست‌شناسی ۱",
-    Where: "۵. حس و حرکت",
-    Level: "2",
+    where: "۵. حس و حرکت",
+    level: "2",
     source: "کنکور سراسری",
     hasImg: false,
     question: `

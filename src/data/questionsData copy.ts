@@ -13,7 +13,7 @@ export const questionsData = [
     date: "اردیبهشت ۱۳۹۸",
     score: 2,
     tags: ["چهار گزینه ای", "جای خالی", "صورت مبهم", "مقایسه ای", "مفهومی", "متوسط"],
-    referencePageNumbers: [19, 25, 46, 57],
+    refPageNumbers: [19, 25, 46, 57],
   },
   {
     id: 2,
@@ -29,6 +29,7 @@ export const questionsData = [
     date: "خرداد ۱۴۰۲",
     score: 1,
     tags: ["چهار گزینه ای", "صورت مبهم", "مقایسه ای", "مفهومی", "سخت"],
+    refPageNumbers: [19, 25, 46, 57],
   },
   {
     id: 3,
@@ -44,5 +45,6 @@ export const questionsData = [
     date: "دی ۱۳۹۸",
     score: 2,
     tags: ["چهار گزینه ای", "صورت مبهم", "جای خالی", "مقایسه ای", "مفهومی", "متوسط"],
+    refPageNumbers: [19, 25, 46, 57],
   },
 ];
