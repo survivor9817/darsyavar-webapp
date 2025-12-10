@@ -1,13 +1,41 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import FeedbackMsg from "./FeedbackMsg";
 import IconBtn from "./IconBtn";
 import FeedbackBtn from "./FeedbackBtn";
+import Modal from "./Modal";
 import { toFaNums } from "../utils/toFaNums";
 import { feedbackBtnData, feedbackMsgData } from "../data/feedbackData";
 import { questionsData } from "../data/questionsData";
+import { useFeedbackBtns } from "../hooks/useFeedbackBtns";
+import { QuizContext } from "./Quiz";
 
 const QuizView = () => {
+  const { setQuizStatus } = useContext(QuizContext);
+
+  const [showEndConfirm, setShowEndConfirm] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [isAnswerVisible, setAnswerVisible] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const currentQuestionID = useRef(1);
+
+  const lastQuestionIndex = questionsData.length - 1;
+  const progressBarLength = ((currentQuestionIndex + 1) / (lastQuestionIndex + 1)) * 100;
+
+  function closeEndConfirm() {
+    setShowEndConfirm(false);
+  }
+
+  function openEndConfirm() {
+    setShowEndConfirm(true);
+  }
+
+  function closeResults() {
+    setShowResults(false);
+  }
+
+  function openResults() {
+    setShowResults(true);
+  }
 
   function toggleAnswer() {
     setAnswerVisible((prev) => !prev);
@@ -17,31 +45,39 @@ const QuizView = () => {
     setAnswerVisible(false);
   }
 
-  const [currQuestionIndex, setCurrQuestionIndex] = useState(0);
-
-  // fetch bayad bezanim ke in var haye badi moshakhas beshan
-  const lastQuestionIndex = questionsData.length - 1;
-  const progressBarLength = ((currQuestionIndex + 1) / (lastQuestionIndex + 1)) * 100;
-
   useEffect(() => {
     hideAnswer();
-  }, [currQuestionIndex]);
+  }, [currentQuestionIndex]);
 
   function goToQuestion(number: number) {
     if (number < 0 || isNaN(number) || number > lastQuestionIndex) return;
-    setCurrQuestionIndex(number);
+    setCurrentQuestionIndex(number);
   }
 
   function goToPrevQuestion() {
-    const newQuestionIndex = Math.max(0, +currQuestionIndex - 1);
+    const newQuestionIndex = Math.max(0, currentQuestionIndex - 1);
     goToQuestion(newQuestionIndex);
   }
 
   function goToNextQuestion() {
-    const newQuestionNumber = Math.min(+lastQuestionIndex, +currQuestionIndex + 1);
-    goToQuestion(newQuestionNumber);
+    if (currentQuestionIndex === lastQuestionIndex) {
+      setShowEndConfirm(true);
+      return;
+    }
+    const newQuestionIndex = Math.min(lastQuestionIndex, currentQuestionIndex + 1);
+    goToQuestion(newQuestionIndex);
   }
 
+  function endQuiz() {
+    closeEndConfirm();
+    openResults();
+  }
+
+  function showFilterView() {
+    setQuizStatus("off");
+  }
+
+  // fetch and inject data
   const {
     // id,
     // bookName,
@@ -54,93 +90,14 @@ const QuizView = () => {
     score,
     tags,
     // refs,
-  } = questionsData[currQuestionIndex];
+  } = questionsData[currentQuestionIndex];
 
-  // btns and msgs handlers and logic #########################################
-  const [btnsMeta, setBtnsMeta] = useState(feedbackBtnData);
-  const [msgsMeta, setMsgsMeta] = useState(feedbackMsgData);
+  const { btnsMeta, msgsMeta, updateFeedback, handleBtn, getBtnsState } = useFeedbackBtns(
+    feedbackBtnData,
+    feedbackMsgData
+  );
 
-  function handleBtn(id: string, state: boolean) {
-    setBtnsMeta((prev) => {
-      return prev.map((item) => {
-        if (item.id === id) return { ...item, isOn: state };
-        const clickedOnCorrect = id === "correct" && item.id === "incorrect";
-        const clickedOnIncorrect = id === "incorrect" && item.id === "correct";
-        if (clickedOnCorrect || clickedOnIncorrect) return { ...item, isOn: false };
-        return item;
-      });
-    });
-  }
-
-  function handleMsg(id: string, state: boolean) {
-    setMsgsMeta((prev) => {
-      return prev.map((item) => {
-        if (item.id === id) return { ...item, isOn: state };
-        const clickedOnCorrect = id === "correct" && item.id === "incorrect";
-        const clickedOnIncorrect = id === "incorrect" && item.id === "correct";
-        if (clickedOnCorrect || clickedOnIncorrect) return { ...item, isOn: false };
-        return item;
-      });
-    });
-  }
-
-  const prevMsgTimeout = useRef<number | null>(null);
-  function clearPrevMsgTimeout() {
-    if (prevMsgTimeout.current !== null) {
-      clearTimeout(prevMsgTimeout.current);
-      prevMsgTimeout.current = null;
-    }
-  }
-
-  useEffect(() => {
-    return () => {
-      clearPrevMsgTimeout();
-    };
-  }, []);
-
-  function updateFeedback(id: string) {
-    const isClickedBtnOn = btnsMeta.find((item) => item.id === id)?.isOn;
-    const isClickedMsgOn = msgsMeta.find((item) => item.id === id)?.isOn;
-    const isOtherMsgOn = msgsMeta.some((item) => item.id !== id && item.isOn);
-    const otherOnMsgID = isOtherMsgOn && msgsMeta.find((item) => item.isOn)?.id;
-    // const noMsgsOn = !msgsMeta.some((item) => item.isOn);
-
-    if (isClickedBtnOn) {
-      handleBtn(id, false);
-    }
-
-    if (isClickedBtnOn && isClickedMsgOn) {
-      handleBtn(id, false);
-      clearPrevMsgTimeout();
-      handleMsg(id, false);
-    }
-
-    if (!isClickedBtnOn && !isOtherMsgOn) {
-      handleBtn(id, true);
-      handleMsg(id, true);
-      prevMsgTimeout.current = setTimeout(() => {
-        handleMsg(id, false);
-      }, 1500);
-    }
-
-    if (!isClickedBtnOn && isOtherMsgOn) {
-      handleBtn(id, true);
-      if (!otherOnMsgID) return;
-      clearPrevMsgTimeout();
-      handleMsg(otherOnMsgID, false);
-      handleMsg(id, true);
-      prevMsgTimeout.current = setTimeout(() => {
-        handleMsg(id, false);
-      }, 1500);
-    }
-  }
-  // #########################################################################
-
-  // inja feedbacke har soal ro dar har click mitonim hesab konim
-  const btnsState = btnsMeta.reduce<Record<string, boolean>>((acc, item) => {
-    acc[item.id] = item.isOn;
-    return acc;
-  }, {});
+  console.log("Buttons State:", getBtnsState());
 
   // fetch and inject buttons data from server
   useEffect(
@@ -153,9 +110,11 @@ const QuizView = () => {
         report: true,
       };
 
-      Object.entries(serverSavedFeedback).forEach(([id, isOn]) => {
-        handleBtn(id, isOn);
-      });
+      setTimeout(() => {
+        Object.entries(serverSavedFeedback).forEach(([id, isOn]) => {
+          handleBtn(id, isOn);
+        });
+      }, 2000);
     },
     [
       /** question current number
@@ -165,33 +124,94 @@ const QuizView = () => {
     ]
   );
 
-  console.log("Buttons State:", btnsState);
-
   return (
     <>
-      <div
-        id="ExercisesContainer"
-        className={`exercises-container ${isAnswerVisible ? "open" : null}`}
-      >
+      <div className={`quiz-box ${isAnswerVisible ? "open" : null}`}>
+        {/* confirm modal */}
+        {showEndConfirm && (
+          <Modal onClose={closeEndConfirm} className="w-[310px]">
+            {/* Message */}
+            <p className="text-center text-lg leading-6 mt-6 mb-6 p-4">
+              می‌خوای این جلسه تمرین رو تموم کنی؟
+            </p>
+
+            {/* Actions */}
+            <div className="flex items-center justify-center gap-4">
+              <button
+                className="rounded-full bg-black text-white px-6 py-2 transition-colors hover:bg-neutral-700 active:bg-neutral-800 w-lg h-10 cursor-pointer"
+                onClick={endQuiz}
+              >
+                بله
+              </button>
+
+              <button
+                className="rounded-full bg-gray-200 text-black px-6 py-2 transition-colors hover:bg-gray-300 active:bg-gray-400 w-lg h-10 cursor-pointer"
+                onClick={closeEndConfirm}
+              >
+                خیر
+              </button>
+            </div>
+          </Modal>
+        )}
+
+        {/* results modal */}
+        {showResults && (
+          <Modal onClose={closeResults} className="w-[310px]">
+            {/* Message */}
+            <p className="text-center text-lg leading-6 mt-6 mb-6 p-4">ماشالا پسر عالی ریدی</p>
+
+            {/* Actions */}
+            <div className="flex items-center justify-center gap-4">
+              <button
+                className="rounded-full bg-black text-white px-6 py-2 transition-colors hover:bg-neutral-700 active:bg-neutral-800 w-lg h-10 cursor-pointer"
+                onClick={showFilterView}
+              >
+                بله
+              </button>
+
+              <button
+                className="rounded-full bg-gray-200 text-black px-6 py-2 transition-colors hover:bg-gray-300 active:bg-gray-400 w-lg h-10 cursor-pointer"
+                onClick={closeResults}
+              >
+                خیر
+              </button>
+            </div>
+          </Modal>
+        )}
+
+        {/* Quiz card */}
         {/* <!-- Row 1 : Navigation Buttons of Exercise Section --> */}
-        <div className="exercise-navbar">
-          <IconBtn
-            className={"btn--prev-question"}
-            icon={"arrow_circle_right"}
-            onClick={goToPrevQuestion}
-          />
-          <IconBtn
-            className={"btn--next-question"}
-            icon={"arrow_circle_left"}
-            onClick={goToNextQuestion}
-          />
+        <div className="quiz-navbar">
+          <div className="quiz-nav-right">
+            <IconBtn
+              className={"btn--prev-question"}
+              icon={"arrow_circle_right"}
+              onClick={goToPrevQuestion}
+            />
+          </div>
+
+          <div className="quiz-nav-left">
+            <IconBtn
+              className={"btn--prev-question"}
+              icon={"power_settings_circle"}
+              onClick={openEndConfirm}
+            />
+
+            <IconBtn
+              className={"btn--next-question"}
+              icon={"arrow_circle_left"}
+              onClick={goToNextQuestion}
+            />
+          </div>
         </div>
 
         {/* <!-- Row 2 : Exercise Number and Tags --> */}
         <div className="top-info-bar">
           <div className="exercise-number">
             {/* {"شماره تمرین"} */}
-            {`تمرین شماره ${toFaNums(currQuestionIndex + 1)} از ${toFaNums(lastQuestionIndex + 1)}`}
+            {`تمرین شماره ${toFaNums(currentQuestionIndex + 1)} از ${toFaNums(
+              lastQuestionIndex + 1
+            )}`}
           </div>
           <div className="tags-container">
             <ul className="tags-list">
@@ -219,12 +239,12 @@ const QuizView = () => {
 
         {/* <!-- Row 4 : Question Box --> */}
         <div className="question-card">
-          <div className="question-container" dangerouslySetInnerHTML={{ __html: question }}>
+          <div className="question-content" dangerouslySetInnerHTML={{ __html: question }}>
             {/* {"متن سوال"} */}
           </div>
 
           {/* <!-- user feedbacks --> */}
-          <div className="feedback-msg-container">
+          <div className="feedback-msg-box">
             <ul className="feedback-msg-list">
               {msgsMeta.map((item) => (
                 <FeedbackMsg
@@ -240,23 +260,26 @@ const QuizView = () => {
         </div>
 
         {/* <!-- Row 5 : Middle Row : answerToggle-authorLink-userInputs --> */}
-        <div className="exercise__middle-bar">
+        <div className="question-mid-bar">
           <div className="toggle-author-container">
-            <button id="ShowAnswerBtn" className="btn--show-answer" onClick={toggleAnswer}></button>
-            <div className="exercise-author">
+            <button className="btn--show-answer" onClick={toggleAnswer}></button>
+
+            <div className="question-author">
               <i className="msr"> draft_orders </i>
-              <span id="AuthorFullName">
+              <span className="author-fullname">
                 {/* {"نویسنده"} */}
                 {author}
               </span>
             </div>
           </div>
-          <div className="details-inputBtns-container">
-            <div className="exercise-details">
+
+          <div className="question-details-box">
+            <div className="question-details">
               {/* {"نمره تاریخ منبع"} */}
               {`${source} - ${date} - ${toFaNums(score)} نمره`}
             </div>
-            <div className="quiz-feedback-btns">
+
+            <div className="question-feedback-btns">
               {btnsMeta.map((item) => (
                 <FeedbackBtn
                   key={item.id}
@@ -271,17 +294,10 @@ const QuizView = () => {
         </div>
 
         {/* <!-- Row 6 : Answer Box --> */}
-        <div className="exercise__answer-box">
-          <div
-            className="descriptive-answer"
-            dangerouslySetInnerHTML={{ __html: descriptiveAnswer }}
-          >
+        <div className="question-answer-card">
+          <div className="answer-content" dangerouslySetInnerHTML={{ __html: descriptiveAnswer }}>
             {/* {"متن جواب"} */}
           </div>
-          {/* <!-- Row 7 : References --> */}
-          {/* <div className="exercise-bottom-bar">
-              <ul className="ref-list">{refsList()}</ul>
-            </div> */}
         </div>
       </div>
     </>

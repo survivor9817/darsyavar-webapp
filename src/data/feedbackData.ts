@@ -68,3 +68,6 @@ export const feedbackMsgData = [
     isOn: false,
   },
 ];
+
+export type feedbackBtnsType = typeof feedbackBtnData;
+export type feedbackMsgsType = typeof feedbackMsgData;

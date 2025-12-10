@@ -1,27 +1,29 @@
-import { useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import FilterSelector from "./FilterSelector";
-import { options } from "../data/filterOptionsData";
-import { BookContext } from "./Layout";
 import QuizView from "./QuizView";
+import { BookContext } from "./Layout";
+import { options } from "../data/filterOptionsData";
 import { requestedQuestionsIDs } from "../data/questionsData";
+import { QuizSession } from "../classes/QuizSession";
+
+type QuizContextType = {
+  setQuizStatus: (value: string) => void;
+};
+
+export const QuizContext = createContext<QuizContextType>({
+  setQuizStatus: () => {},
+});
 
 const Quiz = () => {
   const { currentBook } = useContext(BookContext);
   const [quizStatus, setQuizStatus] = useState("off");
-  // const [session, setSession] = useState({
-  //   // sessionId: generateSessionId(),
-  //   sessionId: 1,
-  //   startTime: new Date(),
-  //   endTime: null,
-  //   status: "in-progress",
-  //   bookName: currentBook,
-  //   filters: { Book: currentBook, Where: "", Level: "", Source: "" },
-  //   currentQIndex: 0,
-  //   currentQID: requestedQuestionsIDs[this.currentQIndex].id,
-  //   questionsCount: requestedQuestionsIDs.length,
-  //   feedbackResults: {},
-  //   questionIDs: requestedQuestionsIDs,
-  // });
+
+  function showQuestionView() {
+    setQuizStatus("in-progress");
+  }
+
+  // make it in ref
+  const [session, setSession] = useState(new QuizSession(currentBook, {}, []));
 
   const [filtersData, setFiltersData] = useState({
     Book: currentBook,
@@ -54,9 +56,15 @@ const Quiz = () => {
     const filters = Object.fromEntries(formData);
     console.log(filters);
     console.log(filtersData);
-    setQuizStatus("in-progress");
+
+    console.log(session);
+    setSession(new QuizSession(currentBook, filtersData, [1, 2, 3]));
+
+    showQuestionView();
     resetFilters();
   }
+
+  // function endQuiz() {}
 
   // progresive disclosure logic ##############################################
   const showLevel = filtersData.Where !== "";
@@ -80,48 +88,54 @@ const Quiz = () => {
   }
   // ##########################################################################
 
+  const quizContextValue: QuizContextType = {
+    setQuizStatus,
+  };
+
   return (
     <>
-      <div id="Quiz" className="tab-container">
-        {/* FilterView */}
-        {quizStatus === "off" ? (
-          <form className="filter-section" action={startQuiz}>
-            <div className="quiz-filters" style={{ height: getHeight() }}>
-              <FilterSelector
-                id={"Where"}
-                label={"از کجای کتاب تمرین می‌خوای؟"}
-                value={filtersData.Where}
-                onChange={onFilterChange}
-                options={options.Where}
-              />
+      <QuizContext.Provider value={quizContextValue}>
+        <div id="Quiz" className="tab-container">
+          {/* FilterView */}
+          {quizStatus === "off" ? (
+            <form className="filter-section" action={startQuiz}>
+              <div className="quiz-filters" style={{ height: getHeight() }}>
+                <FilterSelector
+                  id={"Where"}
+                  label={"از کجای کتاب تمرین می‌خوای؟"}
+                  value={filtersData.Where}
+                  onChange={onFilterChange}
+                  options={options.Where}
+                />
 
-              <FilterSelector
-                id="Level"
-                label="در چه سطحی باشند؟"
-                value={filtersData.Level}
-                onChange={onFilterChange}
-                options={options.Level}
-              />
+                <FilterSelector
+                  id="Level"
+                  label="در چه سطحی باشند؟"
+                  value={filtersData.Level}
+                  onChange={onFilterChange}
+                  options={options.Level}
+                />
 
-              <FilterSelector
-                id="Source"
-                label="از چه منبعی باشند؟"
-                value={filtersData.Source}
-                onChange={onFilterChange}
-                options={options.Source}
-              />
-            </div>
-            <div className={`btn-container ${showBtn ? "btn-visible" : null}`}>
-              <button type="submit" className="start-exercise-btn">
-                <span>شروع تمرین</span>
-              </button>
-            </div>
-          </form>
-        ) : null}
+                <FilterSelector
+                  id="Source"
+                  label="از چه منبعی باشند؟"
+                  value={filtersData.Source}
+                  onChange={onFilterChange}
+                  options={options.Source}
+                />
+              </div>
+              <div className={`btn-container ${showBtn ? "btn-visible" : null}`}>
+                <button type="submit" className="start-exercise-btn">
+                  <span>شروع تمرین</span>
+                </button>
+              </div>
+            </form>
+          ) : null}
 
-        {/* QuizView */}
-        {quizStatus === "in-progress" ? <QuizView /> : null}
-      </div>
+          {/* QuizView */}
+          {quizStatus === "in-progress" ? <QuizView /> : null}
+        </div>
+      </QuizContext.Provider>
     </>
   );
 };

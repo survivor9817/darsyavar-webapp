@@ -1,6 +1,6 @@
 export const requestedQuestionsIDs = [1, 2, 3];
 
-const serverSavedFeedback = [
+export const serverSavedFeedback = [
   {
     id: 1,
     correct: false,

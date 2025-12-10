@@ -757,7 +757,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 /* exercise section */
-.exercises-container {
+.quiz-box {
   display: flex;
   /* display: none; */
   flex-direction: column;
@@ -765,8 +765,8 @@ input[type="number"]::-webkit-outer-spin-button {
   padding: 8px;
 }
 
-.exercises-container > :nth-child(2),
-.exercises-container > :nth-child(3) {
+.quiz-box > :nth-child(2),
+.quiz-box > :nth-child(3) {
   margin-bottom: -8px;
 }
 
@@ -775,10 +775,16 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 /* Row 1 : Navigation Buttons of Exercise Section */
-.exercise-navbar {
+.quiz-navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 48px;
+}
+
+.quiz-nav-right,
+.quiz-nav-left {
+  height: 100%;
 }
 
 .btn--prev-question,
@@ -961,7 +967,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 /* Question-Box__feedback-msg */
-.feedback-msg-container {
+.feedback-msg-box {
   position: absolute;
   left: 0;
   bottom: 0;
@@ -1030,7 +1036,7 @@ li.feedback-msg-pop-in {
 }
 
 /* Row 5 : Middle Row : answerToggle-authorLink-userInputs */
-.exercise__middle-bar {
+.question-mid-bar {
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -1039,7 +1045,7 @@ li.feedback-msg-pop-in {
 }
 
 .toggle-author-container,
-.details-inputBtns-container {
+.question-details-box {
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -1051,13 +1057,13 @@ li.feedback-msg-pop-in {
 }
 
 @media screen and (max-width: 735px) {
-  .exercise__middle-bar {
+  .question-mid-bar {
     flex-direction: column-reverse;
     gap: 8px;
   }
 
   .toggle-author-container,
-  .details-inputBtns-container {
+  .question-details-box {
     width: 100%;
   }
 }
@@ -1066,7 +1072,7 @@ li.feedback-msg-pop-in {
   border-bottom-right-radius: 25px;
 }
 
-.open .details-inputBtns-container {
+.open .question-details-box {
   border-top-left-radius: 25px;
 }
 
@@ -1084,7 +1090,7 @@ li.feedback-msg-pop-in {
   text-wrap: nowrap;
   overflow: hidden;
   cursor: pointer;
-  transition: background-color 0.3s ease, width 0.5s ease, border-radius 0.5s ease;
+  transition: width 0.5s ease, border-radius 0.5s ease;
 }
 
 .btn--show-answer:hover {
@@ -1104,7 +1110,7 @@ li.feedback-msg-pop-in {
   content: "بستن پاسخ";
 }
 
-.exercise-author {
+.question-author {
   flex-shrink: 0;
   width: 190px;
   height: 48px;
@@ -1116,18 +1122,18 @@ li.feedback-msg-pop-in {
 }
 
 @media screen and (max-width: 735px) {
-  .exercise-author {
+  .question-author {
     width: 100%;
   }
 }
 
-.exercise-author i {
+.question-author i {
   font-size: 32px;
   margin-left: 4px;
 }
 
 /* Leftside of Middle Row : inside of exercise-details-container */
-.exercise-details {
+.question-details {
   flex-shrink: 0;
   box-sizing: border-box;
   width: 95.6%;
@@ -1146,11 +1152,11 @@ li.feedback-msg-pop-in {
   transition: transform 0.5s;
 }
 
-.open .exercise-details {
+.open .question-details {
   transform: translateX(105%);
 }
 
-.quiz-feedback-btns {
+.question-feedback-btns {
   flex-shrink: 0;
   display: flex;
   justify-content: space-around;
@@ -1162,17 +1168,17 @@ li.feedback-msg-pop-in {
 }
 
 @media screen and (max-width: 735px) {
-  .quiz-feedback-btns {
+  .question-feedback-btns {
     width: 100%;
   }
 }
 
-.open .quiz-feedback-btns {
+.open .question-feedback-btns {
   transform: translateX(100%);
 }
 
 /* exercise option buttons */
-.quiz-feedback-btns button {
+.question-feedback-btns button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1186,7 +1192,7 @@ li.feedback-msg-pop-in {
     transform: scale(1.1); 
 } */
 
-.quiz-feedback-btns i {
+.question-feedback-btns i {
   color: black;
 }
 
@@ -1221,7 +1227,7 @@ li.feedback-msg-pop-in {
 }
 
 /* Row 6 : Answer Box */
-.exercise__answer-box {
+.question-answer-card {
   border: 2px solid black;
   border-radius: 16px 6px 28px 28px;
   margin-bottom: 16px;
@@ -1237,23 +1243,23 @@ li.feedback-msg-pop-in {
   position: relative;
 }
 
-.open .exercise__answer-box {
+.open .question-answer-card {
   max-height: 500vh;
   opacity: 1;
 }
 
-.descriptive-answer {
+.answer-content {
   padding: 8px 16px;
   font-size: 18px;
 }
 
-.descriptive-answer h2 {
+.answer-content h2 {
   color: #333;
   font-size: 24px;
   padding-top: 16px;
 }
 
-.descriptive-answer p {
+.answer-content p {
   margin: 10px 0;
   line-height: 1.6;
 }
