@@ -92,6 +92,55 @@ export const useFeedbackBtns = (
     }, {});
   }
 
-  return { btnsMeta, msgsMeta, updateFeedback, handleBtn, handleMsg, getBtnsState };
+  function resetBtns() {
+    const emptyFeedback = {
+      correct: false,
+      incorrect: false,
+      like: false,
+      star: false,
+      report: false,
+    };
+
+    Object.entries(emptyFeedback).forEach(([id, isOn]) => {
+      handleBtn(id, isOn);
+    });
+  }
+
+  function turnOffAllMsgs() {
+    const emptyFeedback = {
+      correct: false,
+      incorrect: false,
+      like: false,
+      star: false,
+      report: false,
+    };
+
+    Object.entries(emptyFeedback).forEach(([id, isOn]) => {
+      handleMsg(id, isOn);
+    });
+  }
+
+  function updateBtnsByObject(feedbackObject: Record<string, boolean>) {
+    setBtnsMeta((prev) => {
+      return prev.map((item) => {
+        if (item.id in feedbackObject) {
+          return { ...item, isOn: feedbackObject[item.id] };
+        }
+        return item;
+      });
+    });
+  }
+
+  return {
+    btnsMeta,
+    msgsMeta,
+    updateFeedback,
+    handleBtn,
+    handleMsg,
+    getBtnsState,
+    resetBtns,
+    updateBtnsByObject,
+    turnOffAllMsgs,
+  };
   // #########################################################################
 };

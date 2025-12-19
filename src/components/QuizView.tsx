@@ -5,7 +5,7 @@ import FeedbackBtn from "./FeedbackBtn";
 import Modal from "./Modal";
 import { toFaNums } from "../utils/toFaNums";
 import { feedbackBtnData, feedbackMsgData } from "../data/feedbackData";
-import { questionsData } from "../data/questionsData";
+import { questionsData, requestedQuestionsIDs, serverSavedFeedback } from "../data/questionsData";
 import { useFeedbackBtns } from "../hooks/useFeedbackBtns";
 import { QuizContext } from "./Quiz";
 
@@ -16,7 +16,11 @@ const QuizView = () => {
   const [showResults, setShowResults] = useState(false);
   const [isAnswerVisible, setAnswerVisible] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const currentQuestionID = useRef(1);
+
+  const quesrionIDs = useRef(requestedQuestionsIDs);
+  let currentQuestionID = quesrionIDs.current[currentQuestionIndex];
+
+  const feedbacks = useRef(serverSavedFeedback);
 
   const lastQuestionIndex = questionsData.length - 1;
   const progressBarLength = ((currentQuestionIndex + 1) / (lastQuestionIndex + 1)) * 100;
@@ -92,37 +96,49 @@ const QuizView = () => {
     // refs,
   } = questionsData[currentQuestionIndex];
 
-  const { btnsMeta, msgsMeta, updateFeedback, handleBtn, getBtnsState } = useFeedbackBtns(
-    feedbackBtnData,
-    feedbackMsgData
-  );
+  const {
+    btnsMeta,
+    msgsMeta,
+    updateFeedback,
+    resetBtns,
+    getBtnsState,
+    updateBtnsByObject,
+    turnOffAllMsgs,
+  } = useFeedbackBtns(feedbackBtnData, feedbackMsgData);
 
-  console.log("Buttons State:", getBtnsState());
+  useEffect(() => {
+    turnOffAllMsgs();
+  }, [currentQuestionIndex]);
 
-  // fetch and inject buttons data from server
-  useEffect(
-    () => {
-      const serverSavedFeedback = {
-        correct: false,
-        incorrect: false,
-        like: false,
-        star: true,
-        report: true,
-      };
+  function saveFeedback(questionId: number, feedbacksMap: Record<string, boolean>) {
+    feedbacks.current = feedbacks.current.filter((item) => item.questionId !== questionId);
+    feedbacks.current.push({
+      questionId,
+      userId: "123",
+      feedbacks: feedbacksMap,
+    });
+  }
 
-      setTimeout(() => {
-        Object.entries(serverSavedFeedback).forEach(([id, isOn]) => {
-          handleBtn(id, isOn);
-        });
-      }, 2000);
-    },
-    [
-      /** question current number
-       * bayad code baala toye time out ham bashe
-       * bekhaatere moddate transition ui dokme haa
-       */
-    ]
-  );
+  useEffect(() => {
+    // inja javab ro toye ref esh save mikonim
+    console.log(getBtnsState());
+    saveFeedback(currentQuestionID, getBtnsState());
+  }, [btnsMeta]);
+
+  useEffect(() => {
+    currentQuestionID = quesrionIDs.current[currentQuestionIndex];
+    const currentFeedback = feedbacks.current.find((item) => item.questionId === currentQuestionID);
+    if (!currentFeedback) return;
+
+    const timerId = setTimeout(() => {
+      resetBtns();
+      updateBtnsByObject(currentFeedback.feedbacks);
+    }, 700);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [currentQuestionIndex]);
 
   return (
     <>

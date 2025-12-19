@@ -3,7 +3,6 @@ import FilterSelector from "./FilterSelector";
 import QuizView from "./QuizView";
 import { BookContext } from "./Layout";
 import { options } from "../data/filterOptionsData";
-import { requestedQuestionsIDs } from "../data/questionsData";
 import { QuizSession } from "../classes/QuizSession";
 
 type QuizContextType = {

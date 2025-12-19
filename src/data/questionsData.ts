@@ -2,28 +2,37 @@ export const requestedQuestionsIDs = [1, 2, 3];
 
 export const serverSavedFeedback = [
   {
-    id: 1,
-    correct: false,
-    incorrect: true,
-    like: false,
-    star: true,
-    report: false,
+    questionId: 1,
+    userId: "123",
+    feedbacks: {
+      correct: true,
+      incorrect: false,
+      like: false,
+      star: true,
+      report: false,
+    },
   },
   {
-    id: 2,
-    correct: false,
-    incorrect: false,
-    like: false,
-    star: true,
-    report: true,
+    questionId: 2,
+    userId: "123",
+    feedbacks: {
+      correct: false,
+      incorrect: false,
+      like: false,
+      star: true,
+      report: true,
+    },
   },
   {
-    id: 3,
-    correct: true,
-    incorrect: false,
-    like: false,
-    star: false,
-    report: true,
+    questionId: 3,
+    userId: "123",
+    feedbacks: {
+      correct: true,
+      incorrect: false,
+      like: false,
+      star: false,
+      report: true,
+    },
   },
 ];
 

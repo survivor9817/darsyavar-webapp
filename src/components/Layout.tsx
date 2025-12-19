@@ -15,7 +15,7 @@ type BookContextType = {
 };
 
 export const BookContext = createContext<BookContextType>({
-  currentBook: "علوم تجربی ۷",
+  currentBook: "",
   setCurrentBook: () => {},
   currentPage: 1,
   setCurrentPage: () => {},
