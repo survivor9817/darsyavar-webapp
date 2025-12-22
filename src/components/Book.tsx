@@ -35,42 +35,44 @@ const Book = () => {
     goToPage(inputPage);
   }
 
-  const inputPageNumberValue = useRef<HTMLInputElement>(null);
+  // turn english page number to farsi digits
+  const inputPageNumberRefEl = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    if (inputPageNumberValue.current) {
-      inputPageNumberValue.current.value = toFaNums(currentPage as number);
+    if (inputPageNumberRefEl.current) {
+      inputPageNumberRefEl.current.value = toFaNums(currentPage as number);
     }
   }, [currentPage]);
 
   function onInputNumber(e: React.ChangeEvent<HTMLInputElement>) {
-    const input = e.target;
-    const inputValue = input.value;
+    const inputEl = e.target;
+    const inputValue: string = inputEl.value.trim();
     if (inputValue === "") return;
-    const value = convertToEnglishDigits(inputValue);
-    const max = lastPage;
-    if (value === "0" || isNaN(value) || +value > max) {
+    const max: number = lastPage;
+    const value: string = convertToEnglishDigits(inputValue);
+    const hasNonNumericDigits: boolean = /[^0-9۰-۹]/.test(value);
+    if (hasNonNumericDigits || value === "0" || +value > max) {
       const previousValue = toFaNums(parseInt(value.slice(0, -1), 10));
-      input.value = previousValue;
-      input.style.backgroundColor = "rgb(255, 124, 124)";
-      setTimeout(() => (input.style.backgroundColor = "white"), 300);
+      inputEl.value = previousValue;
+      inputEl.style.backgroundColor = "rgb(255, 124, 124)";
+      setTimeout(() => (inputEl.style.backgroundColor = "white"), 300);
     } else {
-      if (inputPageNumberValue.current) {
-        inputPageNumberValue.current.value = toFaNums(value);
+      if (inputPageNumberRefEl.current) {
+        inputPageNumberRefEl.current.value = toFaNums(+value);
       }
     }
   }
 
   const onFocusPageNumber = useRef(currentPage);
-  function onFocus(e: React.FocusEvent<HTMLInputElement>) {
+  function handleOnFocus(e: React.FocusEvent<HTMLInputElement>) {
     onFocusPageNumber.current = currentPage;
     e.target.select();
   }
 
-  function onBlur(e: React.FocusEvent<HTMLInputElement>) {
+  function handleOnBlur(e: React.FocusEvent<HTMLInputElement>) {
     const value = convertToEnglishDigits(e.target.value.trim());
-    value === "" ? goToPage(+onFocusPageNumber.current) : goToPage(value);
-    if (inputPageNumberValue.current) {
-      inputPageNumberValue.current.value = toFaNums(currentPage as number);
+    value === "" ? goToPage(+onFocusPageNumber.current) : goToPage(+value);
+    if (inputPageNumberRefEl.current) {
+      inputPageNumberRefEl.current.value = toFaNums(currentPage as number);
     }
   }
 
@@ -133,10 +135,10 @@ const Book = () => {
               type="text"
               inputMode="numeric"
               onChange={onInputNumber}
-              onFocus={onFocus}
-              onBlur={onBlur}
+              onFocus={handleOnFocus}
+              onBlur={handleOnBlur}
               onKeyDown={handleKeyDown}
-              ref={inputPageNumberValue}
+              ref={inputPageNumberRefEl}
             />
           </div>
         </div>

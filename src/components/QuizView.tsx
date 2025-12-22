@@ -1,13 +1,14 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import FeedbackMsg from "./FeedbackMsg";
-import IconBtn from "./IconBtn";
-import FeedbackBtn from "./FeedbackBtn";
-import Modal from "./Modal";
 import { toFaNums } from "../utils/toFaNums";
 import { feedbackBtnData, feedbackMsgData } from "../data/feedbackData";
 import { questionsData, requestedQuestionsIDs, serverSavedFeedback } from "../data/questionsData";
 import { useFeedbackBtns } from "../hooks/useFeedbackBtns";
 import { QuizContext } from "./Quiz";
+import FeedbackMsg from "./FeedbackMsg";
+import IconBtn from "./IconBtn";
+import FeedbackBtn from "./FeedbackBtn";
+import Modal from "./Modal";
+import QuestionTag from "./QuestionTag";
 
 const QuizView = () => {
   const { setQuizStatus } = useContext(QuizContext);
@@ -145,7 +146,7 @@ const QuizView = () => {
       <div className={`quiz-box ${isAnswerVisible ? "open" : null}`}>
         {/* confirm modal */}
         {showEndConfirm && (
-          <Modal onClose={closeEndConfirm} className="w-[310px]">
+          <Modal onClose={closeEndConfirm} className="w-77.5">
             {/* Message */}
             <p className="text-center text-lg leading-6 mt-6 mb-6 p-4">
               می‌خوای این جلسه تمرین رو تموم کنی؟
@@ -171,6 +172,8 @@ const QuizView = () => {
         )}
 
         {/* results modal */}
+        {/* inja bayad ye component modal bashe ke data result tamrin ro
+        begire onaa ro tooye ye jadval render kone */}
         {showResults && (
           <Modal onClose={closeResults} className="w-[310px]">
             {/* Message */}
@@ -230,13 +233,10 @@ const QuizView = () => {
             )}`}
           </div>
           <div className="tags-container">
+            {/* {"تگ ها"} */}
             <ul className="tags-list">
-              {/* {"تگ ها"} */}
-              {/* {renderedTags} */}
               {tags.map((tag) => (
-                <li key={tag} className="tag">
-                  {tag}
-                </li>
+                <QuestionTag tagLabel={tag} />
               ))}
             </ul>
           </div>
