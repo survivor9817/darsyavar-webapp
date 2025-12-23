@@ -1,6 +1,18 @@
 export const requestedQuestionsIDs = [1, 2, 3];
 
-export const serverSavedFeedback = [
+export type FeedbackObjectType = {
+  isCorrect: boolean | null;
+  isIncorrect: boolean;
+  isLike: boolean;
+  isStar: boolean;
+  isReport: boolean;
+};
+
+export const serverSavedFeedback: {
+  questionId: number;
+  userId: string;
+  feedbacks: FeedbackObjectType;
+}[] = [
   {
     questionId: 1,
     userId: "123",

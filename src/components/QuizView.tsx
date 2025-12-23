@@ -1,7 +1,12 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { toFaNums } from "../utils/toFaNums";
 import { feedbackBtnData, feedbackMsgData } from "../data/feedbackData";
-import { questionsData, requestedQuestionsIDs, serverSavedFeedback } from "../data/questionsData";
+import {
+  questionsData,
+  requestedQuestionsIDs,
+  serverSavedFeedback,
+  type FeedbackObjectType,
+} from "../data/questionsData";
 import { useFeedbackBtns } from "../hooks/useFeedbackBtns";
 import { QuizContext } from "./Quiz";
 import FeedbackMsg from "./FeedbackMsg";
@@ -118,29 +123,15 @@ const QuizView = () => {
     turnOffAllMsgs();
   }, [currentQuestionIndex]);
 
+  // move to custom hook
   // fetch feedbacks
   const feedbacks = useRef(serverSavedFeedback);
-
-  function saveFeedback(questionId: number, feedbacksMap: Record<string, boolean>) {
-    feedbacks.current = feedbacks.current.filter((item) => item.questionId !== questionId);
-    feedbacks.current.push({
-      questionId,
-      userId: "123",
-      feedbacks: feedbacksMap,
-    });
-  }
-
-  // setFeedback
-  // getFeedback
-
   const currentQuestionID = questionIDs.current[currentQuestionIndex];
 
+  // load feedback on load question and on change question.
   useEffect(() => {
     const currentFeedback = feedbacks.current.find((item) => item.questionId === currentQuestionID);
     if (!currentFeedback) return;
-
-    console.log(currentFeedback.feedbacks);
-
     const timerId = setTimeout(() => {
       resetBtns();
       setBtnsStateByObject(currentFeedback.feedbacks);
@@ -151,13 +142,18 @@ const QuizView = () => {
     };
   }, [currentQuestionIndex]);
 
-  // inja daarim feedbacke kaarbar ro az rooye dokme haa migirim
-  // vaase baare aval nabayad az in getBtnsState() estefade konim
-  // fetch mikonim toye motaghayer mirizim va bekaar mibarim.
+  // save feedback on data base.
+  function saveFeedback(questionId: number, userId: string, feedbacksMap: FeedbackObjectType) {
+    feedbacks.current = feedbacks.current.filter((item) => item.questionId !== questionId);
+    feedbacks.current.push({
+      questionId,
+      userId,
+      feedbacks: feedbacksMap,
+    });
+  }
+
   useUpdateEffect(() => {
-    // inja javab ro toye ref esh save mikonim
-    console.log(getBtnsState());
-    saveFeedback(currentQuestionID, getBtnsState());
+    saveFeedback(currentQuestionID, "123", getBtnsState());
   }, [btnsMeta]);
 
   return (

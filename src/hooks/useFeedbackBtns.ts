@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import type { feedbackBtnsType, feedbackMsgsType } from "../data/feedbackData";
+import type { feedbackBtnsType, FeedbackKey, feedbackMsgsType } from "../data/feedbackData";
+import type { FeedbackObjectType } from "../data/questionsData";
 
 export const useFeedbackBtns = (
   feedbackBtnData: feedbackBtnsType,
@@ -47,6 +48,51 @@ export const useFeedbackBtns = (
     };
   }, []);
 
+  const emptyFeedback = {
+    isCorrect: false,
+    isIncorrect: false,
+    isLike: false,
+    isStar: false,
+    isReport: false,
+  };
+
+  function resetBtns() {
+    Object.entries(emptyFeedback).forEach(([id, isOn]) => {
+      handleBtn(id, isOn);
+    });
+  }
+
+  function turnOffAllMsgs() {
+    Object.entries(emptyFeedback).forEach(([id, isOn]) => {
+      handleMsg(id, isOn);
+    });
+  }
+
+  // inja feedbacke har soal ro dar har click mitonim hesab konim
+  function getBtnsState() {
+    return btnsMeta.reduce<Record<FeedbackKey, boolean>>(
+      (acc, item) => {
+        acc[item.id] = item.isOn;
+        return acc;
+      },
+      { ...emptyFeedback }
+    );
+  }
+
+  function setBtnsStateByObject(feedbackObject: FeedbackObjectType) {
+    setBtnsMeta((prev) => {
+      return prev.map((item) => {
+        if (item.id in feedbackObject) {
+          return {
+            ...item,
+            isOn: feedbackObject[item.id] ?? false,
+          };
+        }
+        return item;
+      });
+    });
+  }
+
   function updateFeedbackOnClick(id: string) {
     const isClickedBtnOn = btnsMeta.find((item) => item.id === id)?.isOn;
     const isClickedMsgOn = msgsMeta.find((item) => item.id === id)?.isOn;
@@ -82,56 +128,6 @@ export const useFeedbackBtns = (
         handleMsg(id, false);
       }, 1500);
     }
-  }
-
-  // inja feedbacke har soal ro dar har click mitonim hesab konim
-  function getBtnsState() {
-    return btnsMeta.reduce<Record<string, boolean>>((acc, item) => {
-      acc[item.id] = item.isOn;
-      return acc;
-    }, {});
-  }
-
-  function resetBtns() {
-    const emptyFeedback = {
-      isCorrect: false,
-      isIncorrect: false,
-      isLike: false,
-      isStar: false,
-      isReport: false,
-    };
-
-    Object.entries(emptyFeedback).forEach(([id, isOn]) => {
-      handleBtn(id, isOn);
-    });
-  }
-
-  function turnOffAllMsgs() {
-    const emptyFeedback = {
-      isCorrect: false,
-      isIncorrect: false,
-      isLike: false,
-      isStar: false,
-      isReport: false,
-    };
-
-    Object.entries(emptyFeedback).forEach(([id, isOn]) => {
-      handleMsg(id, isOn);
-    });
-  }
-
-  function setBtnsStateByObject(feedbackObject: Record<string, boolean>) {
-    setBtnsMeta((prev) => {
-      return prev.map((item) => {
-        if (item.id in feedbackObject) {
-          return {
-            ...item,
-            isOn: feedbackObject[item.id] ?? false,
-          };
-        }
-        return item;
-      });
-    });
   }
 
   return {

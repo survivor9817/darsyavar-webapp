@@ -1,4 +1,13 @@
-export const feedbackBtnData = [
+export type FeedbackKey = "isCorrect" | "isIncorrect" | "isLike" | "isStar" | "isReport";
+
+export type FeedbackBtnType = {
+  id: FeedbackKey;
+  isOn: boolean;
+  icon: string;
+  className: string;
+};
+
+export const feedbackBtnData: FeedbackBtnType[] = [
   {
     id: "isCorrect",
     isOn: false,

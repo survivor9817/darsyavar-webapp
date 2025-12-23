@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
+import type { EffectCallback, DependencyList } from "react";
 
-export const useUpdateEffect = (effect, deps) => {
+export const useUpdateEffect = (effect: EffectCallback, deps: DependencyList): void => {
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -8,6 +9,7 @@ export const useUpdateEffect = (effect, deps) => {
       isFirstRender.current = false;
       return;
     }
+
     return effect();
   }, deps);
 };
