@@ -13,8 +13,8 @@ export const useFeedbackBtns = (
     setBtnsMeta((prev) => {
       return prev.map((item) => {
         if (item.id === id) return { ...item, isOn: state };
-        const clickedOnCorrect = id === "correct" && item.id === "incorrect";
-        const clickedOnIncorrect = id === "incorrect" && item.id === "correct";
+        const clickedOnCorrect = id === "isCorrect" && item.id === "isIncorrect";
+        const clickedOnIncorrect = id === "isIncorrect" && item.id === "isCorrect";
         if (clickedOnCorrect || clickedOnIncorrect) return { ...item, isOn: false };
         return item;
       });
@@ -25,8 +25,8 @@ export const useFeedbackBtns = (
     setMsgsMeta((prev) => {
       return prev.map((item) => {
         if (item.id === id) return { ...item, isOn: state };
-        const clickedOnCorrect = id === "correct" && item.id === "incorrect";
-        const clickedOnIncorrect = id === "incorrect" && item.id === "correct";
+        const clickedOnCorrect = id === "isCorrect" && item.id === "isIncorrect";
+        const clickedOnIncorrect = id === "isIncorrect" && item.id === "isCorrect";
         if (clickedOnCorrect || clickedOnIncorrect) return { ...item, isOn: false };
         return item;
       });
@@ -47,7 +47,7 @@ export const useFeedbackBtns = (
     };
   }, []);
 
-  function updateFeedback(id: string) {
+  function updateFeedbackOnClick(id: string) {
     const isClickedBtnOn = btnsMeta.find((item) => item.id === id)?.isOn;
     const isClickedMsgOn = msgsMeta.find((item) => item.id === id)?.isOn;
     const isOtherMsgOn = msgsMeta.some((item) => item.id !== id && item.isOn);
@@ -94,11 +94,11 @@ export const useFeedbackBtns = (
 
   function resetBtns() {
     const emptyFeedback = {
-      correct: false,
-      incorrect: false,
-      like: false,
-      star: false,
-      report: false,
+      isCorrect: false,
+      isIncorrect: false,
+      isLike: false,
+      isStar: false,
+      isReport: false,
     };
 
     Object.entries(emptyFeedback).forEach(([id, isOn]) => {
@@ -108,11 +108,11 @@ export const useFeedbackBtns = (
 
   function turnOffAllMsgs() {
     const emptyFeedback = {
-      correct: false,
-      incorrect: false,
-      like: false,
-      star: false,
-      report: false,
+      isCorrect: false,
+      isIncorrect: false,
+      isLike: false,
+      isStar: false,
+      isReport: false,
     };
 
     Object.entries(emptyFeedback).forEach(([id, isOn]) => {
@@ -120,11 +120,14 @@ export const useFeedbackBtns = (
     });
   }
 
-  function updateBtnsByObject(feedbackObject: Record<string, boolean>) {
+  function setBtnsStateByObject(feedbackObject: Record<string, boolean>) {
     setBtnsMeta((prev) => {
       return prev.map((item) => {
         if (item.id in feedbackObject) {
-          return { ...item, isOn: feedbackObject[item.id] };
+          return {
+            ...item,
+            isOn: feedbackObject[item.id] ?? false,
+          };
         }
         return item;
       });
@@ -134,12 +137,12 @@ export const useFeedbackBtns = (
   return {
     btnsMeta,
     msgsMeta,
-    updateFeedback,
+    updateFeedbackOnClick,
     handleBtn,
     handleMsg,
-    getBtnsState,
     resetBtns,
-    updateBtnsByObject,
+    getBtnsState,
+    setBtnsStateByObject,
     turnOffAllMsgs,
   };
   // #########################################################################

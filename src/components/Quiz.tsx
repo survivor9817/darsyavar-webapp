@@ -3,7 +3,7 @@ import FilterSelector from "./FilterSelector";
 import QuizView from "./QuizView";
 import { BookContext } from "./Layout";
 import { options } from "../data/filterOptionsData";
-import { QuizSession } from "../classes/QuizSession";
+// import { QuizSession } from "../classes/QuizSession";
 
 type QuizContextType = {
   setQuizStatus: (value: string) => void;
@@ -22,7 +22,7 @@ const Quiz = () => {
   }
 
   // make it in ref
-  const [session, setSession] = useState(new QuizSession(currentBook, {}, []));
+  // const [session, setSession] = useState(new QuizSession(currentBook, {}, []));
 
   const [filtersData, setFiltersData] = useState({
     Book: currentBook,
@@ -56,8 +56,8 @@ const Quiz = () => {
     console.log(filters);
     console.log(filtersData);
 
-    console.log(session);
-    setSession(new QuizSession(currentBook, filtersData, [1, 2, 3]));
+    // console.log(session);
+    // setSession(new QuizSession(currentBook, filtersData, [1, 2, 3]));
 
     showQuestionView();
     resetFilters();

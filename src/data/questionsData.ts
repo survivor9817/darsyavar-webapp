@@ -5,33 +5,33 @@ export const serverSavedFeedback = [
     questionId: 1,
     userId: "123",
     feedbacks: {
-      correct: true,
-      incorrect: false,
-      like: false,
-      star: true,
-      report: false,
+      isCorrect: true,
+      isIncorrect: false,
+      isLike: true,
+      isStar: true,
+      isReport: false,
     },
   },
   {
     questionId: 2,
     userId: "123",
     feedbacks: {
-      correct: false,
-      incorrect: false,
-      like: false,
-      star: true,
-      report: true,
+      isCorrect: false,
+      isIncorrect: false,
+      isLike: false,
+      isStar: true,
+      isReport: true,
     },
   },
   {
     questionId: 3,
     userId: "123",
     feedbacks: {
-      correct: true,
-      incorrect: false,
-      like: false,
-      star: false,
-      report: true,
+      isCorrect: true,
+      isIncorrect: false,
+      isLike: false,
+      isStar: false,
+      isReport: true,
     },
   },
 ];
@@ -273,3 +273,5 @@ export const questionsData = [
     },
   },
 ];
+
+export type questionDataType = (typeof questionsData)[0];

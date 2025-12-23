@@ -9,6 +9,7 @@ import IconBtn from "./IconBtn";
 import FeedbackBtn from "./FeedbackBtn";
 import Modal from "./Modal";
 import QuestionTag from "./QuestionTag";
+import { useUpdateEffect } from "../hooks/useUpdateEffect";
 
 const QuizView = () => {
   const { setQuizStatus } = useContext(QuizContext);
@@ -18,13 +19,44 @@ const QuizView = () => {
   const [isAnswerVisible, setAnswerVisible] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  const quesrionIDs = useRef(requestedQuestionsIDs);
-  let currentQuestionID = quesrionIDs.current[currentQuestionIndex];
+  // aval fetch idhaa
 
-  const feedbacks = useRef(serverSavedFeedback);
+  // fetch and inject data
+  const questionData = questionsData[currentQuestionIndex];
+  if (!questionData) return null;
+  const {
+    // id,
+    // bookName,
+    question,
+    // answerKey,
+    descriptiveAnswer,
+    author,
+    source,
+    date,
+    score,
+    tags,
+    // refs,
+  } = questionData;
 
-  const lastQuestionIndex = questionsData.length - 1;
-  const progressBarLength = ((currentQuestionIndex + 1) / (lastQuestionIndex + 1)) * 100;
+  // fetch by users filters and save qids array in a ref.
+  const questionIDs = useRef(requestedQuestionsIDs);
+
+  const [progressPercent, setProgressPercent] = useState(0);
+  const lastQuestionIndex = questionIDs.current.length - 1;
+  useEffect(() => {
+    const progressBarLength = ((currentQuestionIndex + 1) / (lastQuestionIndex + 1)) * 100;
+    requestAnimationFrame(() => {
+      setProgressPercent(progressBarLength);
+    });
+  }, [currentQuestionIndex]);
+
+  function toggleAnswer() {
+    setAnswerVisible((prev) => !prev);
+  }
+
+  function hideAnswer() {
+    setAnswerVisible(false);
+  }
 
   function closeEndConfirm() {
     setShowEndConfirm(false);
@@ -42,17 +74,14 @@ const QuizView = () => {
     setShowResults(true);
   }
 
-  function toggleAnswer() {
-    setAnswerVisible((prev) => !prev);
+  function endQuiz() {
+    closeEndConfirm();
+    openResults();
   }
 
-  function hideAnswer() {
-    setAnswerVisible(false);
+  function showFilterView() {
+    setQuizStatus("off");
   }
-
-  useEffect(() => {
-    hideAnswer();
-  }, [currentQuestionIndex]);
 
   function goToQuestion(number: number) {
     if (number < 0 || isNaN(number) || number > lastQuestionIndex) return;
@@ -73,43 +102,24 @@ const QuizView = () => {
     goToQuestion(newQuestionIndex);
   }
 
-  function endQuiz() {
-    closeEndConfirm();
-    openResults();
-  }
-
-  function showFilterView() {
-    setQuizStatus("off");
-  }
-
-  // fetch and inject data
-  const {
-    // id,
-    // bookName,
-    question,
-    // answerKey,
-    descriptiveAnswer,
-    author,
-    source,
-    date,
-    score,
-    tags,
-    // refs,
-  } = questionsData[currentQuestionIndex];
-
+  // feedback handlers
   const {
     btnsMeta,
     msgsMeta,
-    updateFeedback,
+    updateFeedbackOnClick,
     resetBtns,
     getBtnsState,
-    updateBtnsByObject,
+    setBtnsStateByObject,
     turnOffAllMsgs,
   } = useFeedbackBtns(feedbackBtnData, feedbackMsgData);
 
   useEffect(() => {
+    hideAnswer();
     turnOffAllMsgs();
   }, [currentQuestionIndex]);
+
+  // fetch feedbacks
+  const feedbacks = useRef(serverSavedFeedback);
 
   function saveFeedback(questionId: number, feedbacksMap: Record<string, boolean>) {
     feedbacks.current = feedbacks.current.filter((item) => item.questionId !== questionId);
@@ -120,26 +130,35 @@ const QuizView = () => {
     });
   }
 
-  useEffect(() => {
-    // inja javab ro toye ref esh save mikonim
-    console.log(getBtnsState());
-    saveFeedback(currentQuestionID, getBtnsState());
-  }, [btnsMeta]);
+  // setFeedback
+  // getFeedback
+
+  const currentQuestionID = questionIDs.current[currentQuestionIndex];
 
   useEffect(() => {
-    currentQuestionID = quesrionIDs.current[currentQuestionIndex];
     const currentFeedback = feedbacks.current.find((item) => item.questionId === currentQuestionID);
     if (!currentFeedback) return;
 
+    console.log(currentFeedback.feedbacks);
+
     const timerId = setTimeout(() => {
       resetBtns();
-      updateBtnsByObject(currentFeedback.feedbacks);
+      setBtnsStateByObject(currentFeedback.feedbacks);
     }, 700);
 
     return () => {
       clearTimeout(timerId);
     };
   }, [currentQuestionIndex]);
+
+  // inja daarim feedbacke kaarbar ro az rooye dokme haa migirim
+  // vaase baare aval nabayad az in getBtnsState() estefade konim
+  // fetch mikonim toye motaghayer mirizim va bekaar mibarim.
+  useUpdateEffect(() => {
+    // inja javab ro toye ref esh save mikonim
+    console.log(getBtnsState());
+    saveFeedback(currentQuestionID, getBtnsState());
+  }, [btnsMeta]);
 
   return (
     <>
@@ -175,7 +194,7 @@ const QuizView = () => {
         {/* inja bayad ye component modal bashe ke data result tamrin ro
         begire onaa ro tooye ye jadval render kone */}
         {showResults && (
-          <Modal onClose={closeResults} className="w-[310px]">
+          <Modal onClose={closeResults} className="w-77.5">
             {/* Message */}
             <p className="text-center text-lg leading-6 mt-6 mb-6 p-4">ماشالا پسر عالی ریدی</p>
 
@@ -248,7 +267,7 @@ const QuizView = () => {
             <div
               className="progress-bar"
               id="ProgressBar"
-              style={{ width: `${progressBarLength}%` }}
+              style={{ width: `${progressPercent}%` }}
             ></div>
           </div>
         </div>
@@ -302,7 +321,7 @@ const QuizView = () => {
                   icon={item.icon}
                   className={item.className}
                   isOn={item.isOn}
-                  onClick={() => updateFeedback(item.id)}
+                  onClick={() => updateFeedbackOnClick(item.id)}
                 />
               ))}
             </div>
