@@ -1,13 +1,8 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { toFaNums } from "../utils/toFaNums";
 import { feedbackBtnData, feedbackMsgData } from "../data/feedbackData";
-import {
-  questionsData,
-  requestedQuestionsIDs,
-  serverSavedFeedback,
-  type FeedbackObjectType,
-} from "../data/questionsData";
-import { useFeedbackBtns } from "../hooks/useFeedbackBtns";
+import { questionsData, requestedQuestionsIDs, serverSavedFeedback } from "../data/questionsData";
+import { useFeedbackBtns, type FeedbackBtnsStateType } from "../hooks/useFeedbackBtns";
 import { QuizContext } from "./Quiz";
 import FeedbackMsg from "./FeedbackMsg";
 import IconBtn from "./IconBtn";
@@ -128,13 +123,40 @@ const QuizView = () => {
   const feedbacks = useRef(serverSavedFeedback);
   const currentQuestionID = questionIDs.current[currentQuestionIndex];
 
+  function getFeedbackFromDB(questionId: number, userId: string) {
+    const currentFeedback = feedbacks.current.find(
+      (f) => f.questionId === questionId && f.userId === userId
+    );
+
+    if (!currentFeedback) {
+      return {
+        isCorrect: false,
+        isIncorrect: false,
+        isLike: false,
+        isStar: false,
+        isReport: false,
+      };
+    }
+
+    const { answer, isLike, isStar, isReport } = currentFeedback;
+
+    const newBtnsState: FeedbackBtnsStateType = {
+      isCorrect: answer === true,
+      isIncorrect: answer === false,
+      isLike: isLike || false,
+      isStar: isStar || false,
+      isReport: isReport || false,
+    };
+
+    return newBtnsState;
+  }
+
   // load feedback on load question and on change question.
   useEffect(() => {
-    const currentFeedback = feedbacks.current.find((item) => item.questionId === currentQuestionID);
-    if (!currentFeedback) return;
+    const currentFeedbackObj = getFeedbackFromDB(currentQuestionID, "123");
     const timerId = setTimeout(() => {
       resetBtns();
-      setBtnsStateByObject(currentFeedback.feedbacks);
+      setBtnsStateByObject(currentFeedbackObj);
     }, 700);
 
     return () => {
@@ -143,17 +165,24 @@ const QuizView = () => {
   }, [currentQuestionIndex]);
 
   // save feedback on data base.
-  function saveFeedback(questionId: number, userId: string, feedbacksMap: FeedbackObjectType) {
-    feedbacks.current = feedbacks.current.filter((item) => item.questionId !== questionId);
-    feedbacks.current.push({
-      questionId,
-      userId,
-      feedbacks: feedbacksMap,
-    });
+  function saveFeedbackToDB(questionId: number, userId: string, btnsState: FeedbackBtnsStateType) {
+    const { isCorrect, isIncorrect, isLike, isStar, isReport } = btnsState;
+
+    let answer = null;
+    if (isCorrect) answer = true;
+    if (isIncorrect) answer = false;
+
+    const dbFeedbackObj = { questionId, userId, answer, isLike, isStar, isReport };
+
+    feedbacks.current = feedbacks.current.filter(
+      (item) => item.questionId !== questionId && item.userId === userId
+    );
+
+    feedbacks.current.push(dbFeedbackObj);
   }
 
   useUpdateEffect(() => {
-    saveFeedback(currentQuestionID, "123", getBtnsState());
+    saveFeedbackToDB(currentQuestionID, "123", getBtnsState());
   }, [btnsMeta]);
 
   return (

@@ -1,50 +1,38 @@
 export const requestedQuestionsIDs = [1, 2, 3];
 
 export type FeedbackObjectType = {
-  isCorrect: boolean | null;
-  isIncorrect: boolean;
+  questionId: number;
+  userId: string;
+  answer: boolean | null;
   isLike: boolean;
   isStar: boolean;
   isReport: boolean;
 };
 
-export const serverSavedFeedback: {
-  questionId: number;
-  userId: string;
-  feedbacks: FeedbackObjectType;
-}[] = [
+export const serverSavedFeedback: FeedbackObjectType[] = [
   {
     questionId: 1,
     userId: "123",
-    feedbacks: {
-      isCorrect: true,
-      isIncorrect: false,
-      isLike: true,
-      isStar: true,
-      isReport: false,
-    },
+    answer: true,
+    isLike: true,
+    isStar: true,
+    isReport: false,
   },
   {
     questionId: 2,
     userId: "123",
-    feedbacks: {
-      isCorrect: false,
-      isIncorrect: false,
-      isLike: false,
-      isStar: true,
-      isReport: true,
-    },
+    answer: true,
+    isLike: false,
+    isStar: true,
+    isReport: true,
   },
   {
     questionId: 3,
     userId: "123",
-    feedbacks: {
-      isCorrect: true,
-      isIncorrect: false,
-      isLike: false,
-      isStar: false,
-      isReport: true,
-    },
+    answer: true,
+    isLike: false,
+    isStar: false,
+    isReport: true,
   },
 ];
 

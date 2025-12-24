@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import type { feedbackBtnsType, FeedbackKey, feedbackMsgsType } from "../data/feedbackData";
-import type { FeedbackObjectType } from "../data/questionsData";
+import type { feedbackBtnsType, feedbackMsgsType } from "../data/feedbackData";
+
+export type FeedbackBtnsStateType = {
+  isCorrect: boolean;
+  isIncorrect: boolean;
+  isLike: boolean;
+  isStar: boolean;
+  isReport: boolean;
+};
 
 export const useFeedbackBtns = (
   feedbackBtnData: feedbackBtnsType,
@@ -69,8 +76,8 @@ export const useFeedbackBtns = (
   }
 
   // inja feedbacke har soal ro dar har click mitonim hesab konim
-  function getBtnsState() {
-    return btnsMeta.reduce<Record<FeedbackKey, boolean>>(
+  function getBtnsState(): FeedbackBtnsStateType {
+    return btnsMeta.reduce(
       (acc, item) => {
         acc[item.id] = item.isOn;
         return acc;
@@ -79,7 +86,7 @@ export const useFeedbackBtns = (
     );
   }
 
-  function setBtnsStateByObject(feedbackObject: FeedbackObjectType) {
+  function setBtnsStateByObject(feedbackObject: FeedbackBtnsStateType) {
     setBtnsMeta((prev) => {
       return prev.map((item) => {
         if (item.id in feedbackObject) {
