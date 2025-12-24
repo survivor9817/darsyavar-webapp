@@ -10,46 +10,42 @@ import FeedbackBtn from "./FeedbackBtn";
 import Modal from "./Modal";
 import QuestionTag from "./QuestionTag";
 import { useUpdateEffect } from "../hooks/useUpdateEffect";
+import { useQuizNav } from "../hooks/useQuizNav";
+import { useModalManager } from "../hooks/uesModalManager";
 
 const QuizView = () => {
-  const { setQuizStatus } = useContext(QuizContext);
+  const { modals, openModal, closeModal /** toggleModal */ } = useModalManager([
+    "endConfirm",
+    "results",
+  ]);
 
-  const [showEndConfirm, setShowEndConfirm] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const [isAnswerVisible, setAnswerVisible] = useState(false);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const { setQuizStatus } = useContext(QuizContext);
+  function showFilterView() {
+    setQuizStatus("off");
+  }
+
+  function endQuiz() {
+    closeModal("endConfirm");
+    openModal("results");
+  }
 
   // aval fetch idhaa
-
-  // fetch and inject data
-  const questionData = questionsData[currentQuestionIndex];
-  if (!questionData) return null;
-  const {
-    // id,
-    // bookName,
-    question,
-    // answerKey,
-    descriptiveAnswer,
-    author,
-    source,
-    date,
-    score,
-    tags,
-    // refs,
-  } = questionData;
-
   // fetch by users filters and save qids array in a ref.
   const questionIDs = useRef(requestedQuestionsIDs);
-
-  const [progressPercent, setProgressPercent] = useState(0);
   const lastQuestionIndex = questionIDs.current.length - 1;
-  useEffect(() => {
-    const progressBarLength = ((currentQuestionIndex + 1) / (lastQuestionIndex + 1)) * 100;
-    requestAnimationFrame(() => {
-      setProgressPercent(progressBarLength);
-    });
-  }, [currentQuestionIndex]);
+  // ==================================================================
+  // useQuizNavigations
+  // ==================================================================
+  const {
+    currentQuestionIndex,
+    progressPercent,
+    // goToQuestion,
+    goToPrevQuestion,
+    goToNextQuestion,
+  } = useQuizNav(0, lastQuestionIndex, () => openModal("endConfirm"));
 
+  // use show answer?
+  const [isAnswerVisible, setAnswerVisible] = useState(false);
   function toggleAnswer() {
     setAnswerVisible((prev) => !prev);
   }
@@ -58,50 +54,13 @@ const QuizView = () => {
     setAnswerVisible(false);
   }
 
-  function closeEndConfirm() {
-    setShowEndConfirm(false);
-  }
+  useEffect(() => {
+    hideAnswer();
+  }, [currentQuestionIndex]);
 
-  function openEndConfirm() {
-    setShowEndConfirm(true);
-  }
-
-  function closeResults() {
-    setShowResults(false);
-  }
-
-  function openResults() {
-    setShowResults(true);
-  }
-
-  function endQuiz() {
-    closeEndConfirm();
-    openResults();
-  }
-
-  function showFilterView() {
-    setQuizStatus("off");
-  }
-
-  function goToQuestion(number: number) {
-    if (number < 0 || isNaN(number) || number > lastQuestionIndex) return;
-    setCurrentQuestionIndex(number);
-  }
-
-  function goToPrevQuestion() {
-    const newQuestionIndex = Math.max(0, currentQuestionIndex - 1);
-    goToQuestion(newQuestionIndex);
-  }
-
-  function goToNextQuestion() {
-    if (currentQuestionIndex === lastQuestionIndex) {
-      setShowEndConfirm(true);
-      return;
-    }
-    const newQuestionIndex = Math.min(lastQuestionIndex, currentQuestionIndex + 1);
-    goToQuestion(newQuestionIndex);
-  }
-
+  // ==================================================================
+  // useFeedbackBtns
+  // ==================================================================
   // feedback handlers
   const {
     btnsMeta,
@@ -114,11 +73,12 @@ const QuizView = () => {
   } = useFeedbackBtns(feedbackBtnData, feedbackMsgData);
 
   useEffect(() => {
-    hideAnswer();
     turnOffAllMsgs();
   }, [currentQuestionIndex]);
 
-  // move to custom hook
+  // ==================================================================
+  // useFeedbackUpdate
+  // ==================================================================
   // fetch feedbacks
   const feedbacks = useRef(serverSavedFeedback);
   const currentQuestionID = questionIDs.current[currentQuestionIndex];
@@ -129,6 +89,7 @@ const QuizView = () => {
     );
 
     if (!currentFeedback) {
+      // in ro be feedbacks push kon baa qid va useridsh
       return {
         isCorrect: false,
         isIncorrect: false,
@@ -185,12 +146,30 @@ const QuizView = () => {
     saveFeedbackToDB(currentQuestionID, "123", getBtnsState());
   }, [btnsMeta]);
 
+  // fetch and inject data
+  const questionData = questionsData[currentQuestionIndex];
+  if (!questionData) return null;
+  const {
+    // id,
+    // bookName,
+    question,
+    // answerKey,
+    descriptiveAnswer,
+    author,
+    source,
+    date,
+    score,
+    tags,
+    // refs,
+  } = questionData;
+
   return (
     <>
       <div className={`quiz-box ${isAnswerVisible ? "open" : null}`}>
         {/* confirm modal */}
-        {showEndConfirm && (
-          <Modal onClose={closeEndConfirm} className="w-77.5">
+        {/* {showEndConfirm && ( */}
+        {modals.endConfirm && (
+          <Modal onClose={() => closeModal("endConfirm")} className="w-77.5">
             {/* Message */}
             <p className="text-center text-lg leading-6 mt-6 mb-6 p-4">
               می‌خوای این جلسه تمرین رو تموم کنی؟
@@ -207,7 +186,7 @@ const QuizView = () => {
 
               <button
                 className="rounded-full bg-gray-200 text-black px-6 py-2 transition-colors hover:bg-gray-300 active:bg-gray-400 w-lg h-10 cursor-pointer"
-                onClick={closeEndConfirm}
+                onClick={() => closeModal("endConfirm")}
               >
                 خیر
               </button>
@@ -218,8 +197,9 @@ const QuizView = () => {
         {/* results modal */}
         {/* inja bayad ye component modal bashe ke data result tamrin ro
         begire onaa ro tooye ye jadval render kone */}
-        {showResults && (
-          <Modal onClose={closeResults} className="w-77.5">
+        {/* {showResults && ( */}
+        {modals.results && (
+          <Modal onClose={() => closeModal("results")} className="w-77.5">
             {/* Message */}
             <p className="text-center text-lg leading-6 mt-6 mb-6 p-4">ماشالا پسر عالی ریدی</p>
 
@@ -234,7 +214,7 @@ const QuizView = () => {
 
               <button
                 className="rounded-full bg-gray-200 text-black px-6 py-2 transition-colors hover:bg-gray-300 active:bg-gray-400 w-lg h-10 cursor-pointer"
-                onClick={closeResults}
+                onClick={() => closeModal("results")}
               >
                 خیر
               </button>
@@ -256,8 +236,9 @@ const QuizView = () => {
           <div className="quiz-nav-left">
             <IconBtn
               className={"btn--prev-question"}
+              iconClassName={"text-red-700"}
               icon={"power_settings_circle"}
-              onClick={openEndConfirm}
+              onClick={() => openModal("endConfirm")}
             />
 
             <IconBtn
