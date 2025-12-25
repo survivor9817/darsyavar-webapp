@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function useQuizNav(
+export function useQuizNavigation(
   startIndex: number,
   lastQuestionIndex: number,
   setShowEndConfirm: (show: boolean) => void

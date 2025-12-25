@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { feedbackBtnsType, feedbackMsgsType } from "../data/feedbackData";
+import type { FeedbackObjectType } from "../data/questionsData";
+import { useUpdateEffect } from "./useUpdateEffect";
 
 export type FeedbackBtnsStateType = {
   isCorrect: boolean;
@@ -11,9 +13,15 @@ export type FeedbackBtnsStateType = {
 
 export const useFeedbackBtns = (
   feedbackBtnData: feedbackBtnsType,
-  feedbackMsgData: feedbackMsgsType
+  feedbackMsgData: feedbackMsgsType,
+  currentQuestionIndex: number,
+  userId: string,
+  savedfeedbacks: FeedbackObjectType[],
+  questionIDs: number[]
 ) => {
-  // btns and msgs handlers and logic #########################################
+  // #########################################################################
+  // useFeedbackBtns: btns and msgs handlers and logic
+  // #########################################################################
   const [btnsMeta, setBtnsMeta] = useState(feedbackBtnData);
   const [msgsMeta, setMsgsMeta] = useState(feedbackMsgData);
 
@@ -55,7 +63,15 @@ export const useFeedbackBtns = (
     };
   }, []);
 
-  const emptyFeedback = {
+  // function showMsgTemporarily(id: string, duration = 1500) {
+  //   clearPrevMsgTimeout();
+  //   handleMsg(id, true);
+  //   prevMsgTimeout.current = setTimeout(() => {
+  //     handleMsg(id, false);
+  //   }, duration);
+  // }
+
+  const emptyFeedbackState = {
     isCorrect: false,
     isIncorrect: false,
     isLike: false,
@@ -64,16 +80,20 @@ export const useFeedbackBtns = (
   };
 
   function resetBtns() {
-    Object.entries(emptyFeedback).forEach(([id, isOn]) => {
+    Object.entries(emptyFeedbackState).forEach(([id, isOn]) => {
       handleBtn(id, isOn);
     });
   }
 
   function turnOffAllMsgs() {
-    Object.entries(emptyFeedback).forEach(([id, isOn]) => {
+    Object.entries(emptyFeedbackState).forEach(([id, isOn]) => {
       handleMsg(id, isOn);
     });
   }
+
+  useEffect(() => {
+    turnOffAllMsgs();
+  }, [currentQuestionIndex]);
 
   // inja feedbacke har soal ro dar har click mitonim hesab konim
   function getBtnsState(): FeedbackBtnsStateType {
@@ -82,7 +102,7 @@ export const useFeedbackBtns = (
         acc[item.id] = item.isOn;
         return acc;
       },
-      { ...emptyFeedback }
+      { ...emptyFeedbackState }
     );
   }
 
@@ -106,7 +126,6 @@ export const useFeedbackBtns = (
     const isOtherMsgOn = msgsMeta.some((item) => item.id !== id && item.isOn);
     const otherOnMsgID = isOtherMsgOn && msgsMeta.find((item) => item.isOn)?.id;
     // const noMsgsOn = !msgsMeta.some((item) => item.isOn);
-
     if (isClickedBtnOn) {
       handleBtn(id, false);
     }
@@ -128,8 +147,8 @@ export const useFeedbackBtns = (
     if (!isClickedBtnOn && isOtherMsgOn) {
       handleBtn(id, true);
       if (!otherOnMsgID) return;
-      clearPrevMsgTimeout();
       handleMsg(otherOnMsgID, false);
+      clearPrevMsgTimeout();
       handleMsg(id, true);
       prevMsgTimeout.current = setTimeout(() => {
         handleMsg(id, false);
@@ -137,16 +156,91 @@ export const useFeedbackBtns = (
     }
   }
 
+  // #########################################################################
+  // useFeedbackUpdate: load and save data to fake db
+  // #########################################################################
+
+  const feedbacks = useRef(savedfeedbacks);
+  const currentQuestionID = questionIDs[currentQuestionIndex];
+
+  function getFeedbackFromDB(questionId: number, userId: string) {
+    const currentFeedback = feedbacks.current.find(
+      (f) => f.questionId === questionId && f.userId === userId
+    );
+
+    if (!currentFeedback) {
+      const emptyFeedbackRecord = {
+        questionId,
+        userId,
+        answer: null,
+        isLike: false,
+        isStar: false,
+        isReport: false,
+      };
+
+      feedbacks.current.push(emptyFeedbackRecord);
+
+      const emptyFeedbackState = {
+        isCorrect: false,
+        isIncorrect: false,
+        isLike: false,
+        isStar: false,
+        isReport: false,
+      };
+
+      return emptyFeedbackState;
+    }
+
+    const { answer, isLike, isStar, isReport } = currentFeedback;
+    const savedBtnsState: FeedbackBtnsStateType = {
+      isCorrect: answer === true,
+      isIncorrect: answer === false,
+      isLike: isLike || false,
+      isStar: isStar || false,
+      isReport: isReport || false,
+    };
+
+    return savedBtnsState;
+  }
+
+  // load feedback on load question and on change question.
+  useEffect(() => {
+    const currentFeedbackObj = getFeedbackFromDB(currentQuestionID, userId);
+    const timerId = setTimeout(() => {
+      resetBtns();
+      setBtnsStateByObject(currentFeedbackObj);
+    }, 700);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [currentQuestionIndex]);
+
+  // save feedback on data base.
+  function saveFeedbackToDB(questionId: number, userId: string, btnsState: FeedbackBtnsStateType) {
+    const { isCorrect, isIncorrect, isLike, isStar, isReport } = btnsState;
+
+    let answer: boolean | null = null;
+    if (isCorrect) answer = true;
+    if (isIncorrect) answer = false;
+
+    const dbFeedbackObj = { questionId, userId, answer, isLike, isStar, isReport };
+
+    feedbacks.current = feedbacks.current.filter(
+      (item) => item.questionId !== questionId && item.userId === userId
+    );
+
+    feedbacks.current.push(dbFeedbackObj);
+  }
+
+  useUpdateEffect(() => {
+    saveFeedbackToDB(currentQuestionID, userId, getBtnsState());
+  }, [btnsMeta]);
+
   return {
     btnsMeta,
     msgsMeta,
     updateFeedbackOnClick,
-    handleBtn,
-    handleMsg,
-    resetBtns,
-    getBtnsState,
-    setBtnsStateByObject,
-    turnOffAllMsgs,
   };
   // #########################################################################
 };

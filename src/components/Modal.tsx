@@ -8,7 +8,7 @@ type ModalProps = {
   className?: string;
 };
 
-const Modal = ({ children, className = "w-[310px]", onClose }: ModalProps) => {
+const Modal = ({ children, className = "w-77.5", onClose }: ModalProps) => {
   // useEffect(() => {
   //   const handleEscape = (e: KeyboardEvent) => {
   //     if (e.key === "Escape") onClose();

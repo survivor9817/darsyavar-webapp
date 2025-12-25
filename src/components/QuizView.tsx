@@ -2,22 +2,18 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { toFaNums } from "../utils/toFaNums";
 import { feedbackBtnData, feedbackMsgData } from "../data/feedbackData";
 import { questionsData, requestedQuestionsIDs, serverSavedFeedback } from "../data/questionsData";
-import { useFeedbackBtns, type FeedbackBtnsStateType } from "../hooks/useFeedbackBtns";
+import { useFeedbackBtns } from "../hooks/useFeedbackBtns";
 import { QuizContext } from "./Quiz";
 import FeedbackMsg from "./FeedbackMsg";
 import IconBtn from "./IconBtn";
 import FeedbackBtn from "./FeedbackBtn";
 import Modal from "./Modal";
 import QuestionTag from "./QuestionTag";
-import { useUpdateEffect } from "../hooks/useUpdateEffect";
-import { useQuizNav } from "../hooks/useQuizNav";
+import { useQuizNavigation } from "../hooks/useQuizNavigation";
 import { useModalManager } from "../hooks/uesModalManager";
 
 const QuizView = () => {
-  const { modals, openModal, closeModal /** toggleModal */ } = useModalManager([
-    "endConfirm",
-    "results",
-  ]);
+  const { modals, openModal, closeModal } = useModalManager(["endConfirm", "results"]);
 
   const { setQuizStatus } = useContext(QuizContext);
   function showFilterView() {
@@ -33,6 +29,7 @@ const QuizView = () => {
   // fetch by users filters and save qids array in a ref.
   const questionIDs = useRef(requestedQuestionsIDs);
   const lastQuestionIndex = questionIDs.current.length - 1;
+
   // ==================================================================
   // useQuizNavigations
   // ==================================================================
@@ -42,7 +39,7 @@ const QuizView = () => {
     // goToQuestion,
     goToPrevQuestion,
     goToNextQuestion,
-  } = useQuizNav(0, lastQuestionIndex, () => openModal("endConfirm"));
+  } = useQuizNavigation(0, lastQuestionIndex, () => openModal("endConfirm"));
 
   // use show answer?
   const [isAnswerVisible, setAnswerVisible] = useState(false);
@@ -62,89 +59,14 @@ const QuizView = () => {
   // useFeedbackBtns
   // ==================================================================
   // feedback handlers
-  const {
-    btnsMeta,
-    msgsMeta,
-    updateFeedbackOnClick,
-    resetBtns,
-    getBtnsState,
-    setBtnsStateByObject,
-    turnOffAllMsgs,
-  } = useFeedbackBtns(feedbackBtnData, feedbackMsgData);
-
-  useEffect(() => {
-    turnOffAllMsgs();
-  }, [currentQuestionIndex]);
-
-  // ==================================================================
-  // useFeedbackUpdate
-  // ==================================================================
-  // fetch feedbacks
-  const feedbacks = useRef(serverSavedFeedback);
-  const currentQuestionID = questionIDs.current[currentQuestionIndex];
-
-  function getFeedbackFromDB(questionId: number, userId: string) {
-    const currentFeedback = feedbacks.current.find(
-      (f) => f.questionId === questionId && f.userId === userId
-    );
-
-    if (!currentFeedback) {
-      // in ro be feedbacks push kon baa qid va useridsh
-      return {
-        isCorrect: false,
-        isIncorrect: false,
-        isLike: false,
-        isStar: false,
-        isReport: false,
-      };
-    }
-
-    const { answer, isLike, isStar, isReport } = currentFeedback;
-
-    const newBtnsState: FeedbackBtnsStateType = {
-      isCorrect: answer === true,
-      isIncorrect: answer === false,
-      isLike: isLike || false,
-      isStar: isStar || false,
-      isReport: isReport || false,
-    };
-
-    return newBtnsState;
-  }
-
-  // load feedback on load question and on change question.
-  useEffect(() => {
-    const currentFeedbackObj = getFeedbackFromDB(currentQuestionID, "123");
-    const timerId = setTimeout(() => {
-      resetBtns();
-      setBtnsStateByObject(currentFeedbackObj);
-    }, 700);
-
-    return () => {
-      clearTimeout(timerId);
-    };
-  }, [currentQuestionIndex]);
-
-  // save feedback on data base.
-  function saveFeedbackToDB(questionId: number, userId: string, btnsState: FeedbackBtnsStateType) {
-    const { isCorrect, isIncorrect, isLike, isStar, isReport } = btnsState;
-
-    let answer = null;
-    if (isCorrect) answer = true;
-    if (isIncorrect) answer = false;
-
-    const dbFeedbackObj = { questionId, userId, answer, isLike, isStar, isReport };
-
-    feedbacks.current = feedbacks.current.filter(
-      (item) => item.questionId !== questionId && item.userId === userId
-    );
-
-    feedbacks.current.push(dbFeedbackObj);
-  }
-
-  useUpdateEffect(() => {
-    saveFeedbackToDB(currentQuestionID, "123", getBtnsState());
-  }, [btnsMeta]);
+  const { btnsMeta, msgsMeta, updateFeedbackOnClick } = useFeedbackBtns(
+    feedbackBtnData,
+    feedbackMsgData,
+    currentQuestionIndex,
+    "123",
+    serverSavedFeedback,
+    questionIDs.current
+  );
 
   // fetch and inject data
   const questionData = questionsData[currentQuestionIndex];
