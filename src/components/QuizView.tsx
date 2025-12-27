@@ -42,7 +42,12 @@ const QuizView = () => {
   // useFeedbackBtns
   // ==================================================================
 
-  const { btnsMeta, msgsMeta, updateFeedbackOnClick } = useFeedbackBtns(
+  const {
+    feedbacks: feedbackss,
+    btnsMeta,
+    msgsMeta,
+    updateFeedbackOnClick,
+  } = useFeedbackBtns(
     feedbackBtnData,
     feedbackMsgData,
     currentQuestionIndex,
@@ -88,7 +93,12 @@ const QuizView = () => {
         {/* results modal */}
         {results && (
           <Modal onClose={closeResults} className="w-77.5">
-            <QuizResultsModalContent onAction={showFilterView} onClose={closeResults} />
+            <QuizResultsModalContent
+              onAction={showFilterView}
+              onClose={closeResults}
+              feedbacksData={feedbackss.current}
+              totalQuestionsNumber={questionIDs.current.length}
+            />
           </Modal>
         )}
 
