@@ -51,7 +51,10 @@ const Quiz = () => {
     console.log(filtersData);
   }
 
+  const [startQuizLoading, setStartQuizLoading] = useState(false);
+
   function startQuiz(formData: FormData) {
+    setStartQuizLoading(true);
     const filters = Object.fromEntries(formData);
     console.log(filters);
     console.log(filtersData);
@@ -59,8 +62,12 @@ const Quiz = () => {
     // console.log(session);
     // setSession(new QuizSession(currentBook, filtersData, [1, 2, 3]));
 
-    showQuestionView();
-    resetFilters();
+    setTimeout(() => {
+      showQuestionView();
+      setStartQuizLoading(false);
+      resetFilters();
+    }, 1000);
+    // showQuestionView();
   }
 
   // function endQuiz() {}
@@ -124,8 +131,15 @@ const Quiz = () => {
                 />
               </div>
               <div className={`btn-container ${showBtn ? "btn-visible" : null}`}>
-                <button type="submit" className="start-exercise-btn">
-                  <span>شروع تمرین</span>
+                <button
+                  type="submit"
+                  className="w-[95.6%] h-12 mx-[2.2%] rounded-[193px] bg-black text-white cursor-pointer transition-colors hover:bg-gray-800 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  disabled={startQuizLoading}
+                >
+                  {startQuizLoading && (
+                    <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  )}
+                  <span>{startQuizLoading ? "در حال شروع تمرین..." : "شروع تمرین"}</span>
                 </button>
               </div>
             </form>

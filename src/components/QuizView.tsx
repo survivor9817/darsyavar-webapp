@@ -1,19 +1,55 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { toFaNums } from "../utils/toFaNums";
-import { feedbackBtnData, feedbackMsgData } from "../data/feedbackData";
-import { questionsData, requestedQuestionsIDs, serverSavedFeedback } from "../data/questionsData";
+import { useContext, useEffect, useRef } from "react";
 import { useFeedbackBtns } from "../hooks/useFeedbackBtns";
+import { useQuizNavigation } from "../hooks/useQuizNavigation";
 import { QuizContext } from "./Quiz";
+import { feedbackBtnData, feedbackMsgData } from "../data/feedbackData";
+import { toFaNums } from "../utils/toFaNums";
+import { questionsData, requestedQuestionsIDs, serverSavedFeedback } from "../data/questionsData";
 import FeedbackMsg from "./FeedbackMsg";
 import IconBtn from "./IconBtn";
 import FeedbackBtn from "./FeedbackBtn";
 import Modal from "./Modal";
 import QuestionTag from "./QuestionTag";
-import { useQuizNavigation } from "../hooks/useQuizNavigation";
-import { useModalManager } from "../hooks/uesModalManager";
+import QuizResultsModalContent from "./QuizResultsModalContent";
+import QuizEndConfirm from "./QuizEndConfirm";
+import useToggle from "../hooks/useToggle";
 
 const QuizView = () => {
-  const { modals, openModal, closeModal } = useModalManager(["endConfirm", "results"]);
+  // ==================================================================
+  // useFetchQuestionIDs and feedbacks
+  // ==================================================================
+  const questionIDs = useRef(requestedQuestionsIDs);
+  const feedbacks = useRef(serverSavedFeedback);
+
+  // ==================================================================
+  // useQuizNavigations
+  // ==================================================================
+  const lastQuestionIndex = questionIDs.current.length - 1;
+
+  const [endConfirm, , openEndConfirm, closeEndConfirm] = useToggle();
+
+  const { currentQuestionIndex, progressPercent, goToPrevQuestion, goToNextQuestion } =
+    useQuizNavigation(0, lastQuestionIndex, openEndConfirm);
+
+  const [isAnswerVisible, toggleAnswer, , hideAnswer] = useToggle();
+  useEffect(() => {
+    hideAnswer();
+  }, [currentQuestionIndex]);
+
+  const [results, , openResults, closeResults] = useToggle();
+
+  // ==================================================================
+  // useFeedbackBtns
+  // ==================================================================
+
+  const { btnsMeta, msgsMeta, updateFeedbackOnClick } = useFeedbackBtns(
+    feedbackBtnData,
+    feedbackMsgData,
+    currentQuestionIndex,
+    "123",
+    feedbacks.current,
+    questionIDs.current
+  );
 
   const { setQuizStatus } = useContext(QuizContext);
   function showFilterView() {
@@ -21,126 +57,38 @@ const QuizView = () => {
   }
 
   function endQuiz() {
-    closeModal("endConfirm");
-    openModal("results");
+    closeEndConfirm();
+    openResults();
+    console.log(feedbacks);
   }
 
-  // aval fetch idhaa
-  // fetch by users filters and save qids array in a ref.
-  const questionIDs = useRef(requestedQuestionsIDs);
-  const lastQuestionIndex = questionIDs.current.length - 1;
-
   // ==================================================================
-  // useQuizNavigations
+  // useFetchQuestion
   // ==================================================================
-  const {
-    currentQuestionIndex,
-    progressPercent,
-    // goToQuestion,
-    goToPrevQuestion,
-    goToNextQuestion,
-  } = useQuizNavigation(0, lastQuestionIndex, () => openModal("endConfirm"));
-
-  // use show answer?
-  const [isAnswerVisible, setAnswerVisible] = useState(false);
-  function toggleAnswer() {
-    setAnswerVisible((prev) => !prev);
-  }
-
-  function hideAnswer() {
-    setAnswerVisible(false);
-  }
-
-  useEffect(() => {
-    hideAnswer();
-  }, [currentQuestionIndex]);
-
-  // ==================================================================
-  // useFeedbackBtns
-  // ==================================================================
-  // feedback handlers
-  const { btnsMeta, msgsMeta, updateFeedbackOnClick } = useFeedbackBtns(
-    feedbackBtnData,
-    feedbackMsgData,
-    currentQuestionIndex,
-    "123",
-    serverSavedFeedback,
-    questionIDs.current
-  );
-
-  // fetch and inject data
   const questionData = questionsData[currentQuestionIndex];
   if (!questionData) return null;
-  const {
-    // id,
-    // bookName,
-    question,
-    // answerKey,
-    descriptiveAnswer,
-    author,
-    source,
-    date,
-    score,
-    tags,
-    // refs,
-  } = questionData;
+  const { question, descriptiveAnswer, author, source, date, score, tags } = questionData;
+
+  const progressLabel = `تمرین شماره ${toFaNums(currentQuestionIndex + 1)} از ${toFaNums(
+    lastQuestionIndex + 1
+  )}`;
+
+  const questionDetails = `${source} - ${date} - ${toFaNums(score)} نمره`;
 
   return (
     <>
-      <div className={`quiz-box ${isAnswerVisible ? "open" : null}`}>
+      <div className={`quiz-box ${isAnswerVisible ? "open" : ""}`}>
         {/* confirm modal */}
-        {/* {showEndConfirm && ( */}
-        {modals.endConfirm && (
-          <Modal onClose={() => closeModal("endConfirm")} className="w-77.5">
-            {/* Message */}
-            <p className="text-center text-lg leading-6 mt-6 mb-6 p-4">
-              می‌خوای این جلسه تمرین رو تموم کنی؟
-            </p>
-
-            {/* Actions */}
-            <div className="flex items-center justify-center gap-4">
-              <button
-                className="rounded-full bg-black text-white px-6 py-2 transition-colors hover:bg-neutral-700 active:bg-neutral-800 w-lg h-10 cursor-pointer"
-                onClick={endQuiz}
-              >
-                بله
-              </button>
-
-              <button
-                className="rounded-full bg-gray-200 text-black px-6 py-2 transition-colors hover:bg-gray-300 active:bg-gray-400 w-lg h-10 cursor-pointer"
-                onClick={() => closeModal("endConfirm")}
-              >
-                خیر
-              </button>
-            </div>
+        {endConfirm && (
+          <Modal onClose={closeEndConfirm} className="w-77.5">
+            <QuizEndConfirm onAction={endQuiz} onClose={closeEndConfirm} />
           </Modal>
         )}
 
         {/* results modal */}
-        {/* inja bayad ye component modal bashe ke data result tamrin ro
-        begire onaa ro tooye ye jadval render kone */}
-        {/* {showResults && ( */}
-        {modals.results && (
-          <Modal onClose={() => closeModal("results")} className="w-77.5">
-            {/* Message */}
-            <p className="text-center text-lg leading-6 mt-6 mb-6 p-4">ماشالا پسر عالی ریدی</p>
-
-            {/* Actions */}
-            <div className="flex items-center justify-center gap-4">
-              <button
-                className="rounded-full bg-black text-white px-6 py-2 transition-colors hover:bg-neutral-700 active:bg-neutral-800 w-lg h-10 cursor-pointer"
-                onClick={showFilterView}
-              >
-                بله
-              </button>
-
-              <button
-                className="rounded-full bg-gray-200 text-black px-6 py-2 transition-colors hover:bg-gray-300 active:bg-gray-400 w-lg h-10 cursor-pointer"
-                onClick={() => closeModal("results")}
-              >
-                خیر
-              </button>
-            </div>
+        {results && (
+          <Modal onClose={closeResults} className="w-77.5">
+            <QuizResultsModalContent onAction={showFilterView} onClose={closeResults} />
           </Modal>
         )}
 
@@ -160,7 +108,7 @@ const QuizView = () => {
               className={"btn--prev-question"}
               iconClassName={"text-red-700"}
               icon={"power_settings_circle"}
-              onClick={() => openModal("endConfirm")}
+              onClick={openEndConfirm}
             />
 
             <IconBtn
@@ -175,15 +123,13 @@ const QuizView = () => {
         <div className="top-info-bar">
           <div className="exercise-number">
             {/* {"شماره تمرین"} */}
-            {`تمرین شماره ${toFaNums(currentQuestionIndex + 1)} از ${toFaNums(
-              lastQuestionIndex + 1
-            )}`}
+            {progressLabel}
           </div>
           <div className="tags-container">
             {/* {"تگ ها"} */}
             <ul className="tags-list">
               {tags.map((tag) => (
-                <QuestionTag tagLabel={tag} />
+                <QuestionTag key={tag} tagLabel={tag} />
               ))}
             </ul>
           </div>
@@ -225,6 +171,7 @@ const QuizView = () => {
         {/* <!-- Row 5 : Middle Row : answerToggle-authorLink-userInputs --> */}
         <div className="question-mid-bar">
           <div className="toggle-author-container">
+            {/* {"دکمه نمایش جواب"} */}
             <button className="btn--show-answer" onClick={toggleAnswer}></button>
 
             <div className="question-author">
@@ -239,10 +186,11 @@ const QuizView = () => {
           <div className="question-details-box">
             <div className="question-details">
               {/* {"نمره تاریخ منبع"} */}
-              {`${source} - ${date} - ${toFaNums(score)} نمره`}
+              {questionDetails}
             </div>
 
             <div className="question-feedback-btns">
+              {/* dokme haaye feedback */}
               {btnsMeta.map((item) => (
                 <FeedbackBtn
                   key={item.id}

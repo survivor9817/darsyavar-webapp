@@ -238,6 +238,7 @@ export const useFeedbackBtns = (
   }, [btnsMeta]);
 
   return {
+    feedbacks,
     btnsMeta,
     msgsMeta,
     updateFeedbackOnClick,
