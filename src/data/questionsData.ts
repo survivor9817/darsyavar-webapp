@@ -164,7 +164,7 @@ export const questionsData = [
     bookName: "زیست‌شناسی ۱",
     where: "۳. ساختار گیاهان",
     level: "3",
-    source: "کنکور سراسری خارج ۱۴۰۱",
+    source: "کنکور سراسری",
     hasImg: false,
     question: `
   <div class="question">

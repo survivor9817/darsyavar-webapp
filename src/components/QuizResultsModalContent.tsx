@@ -38,10 +38,6 @@ const QuizResultsModalContent = ({
     });
 
     result.unAnswered = totalQuestionsNumber - result.corrects - result.incorrects;
-
-    console.log(feedbacks);
-    console.log(result);
-
     return result;
   }
 
@@ -51,6 +47,9 @@ const QuizResultsModalContent = ({
   const truePercent = toFaNums(cutTwoDecimals((corrects / totalQuestionsNumber) * 100));
   const falsePercent = toFaNums(cutTwoDecimals((incorrects / totalQuestionsNumber) * 100));
   const nullPercent = toFaNums(cutTwoDecimals((unAnswered / totalQuestionsNumber) * 100));
+  const percentWithNegativeInfluence = toFaNums(
+    cutTwoDecimals(((corrects - incorrects / 3) / totalQuestionsNumber) * 100)
+  );
 
   return (
     <>
@@ -66,13 +65,13 @@ const QuizResultsModalContent = ({
         <table className="w-full border-separate border-spacing-0">
           <thead className="bg-gray-200">
             <tr>
-              <th className="border-gray-400 px-4 py-3 text-right text-sm font-bold text-gray-900">
+              <th className="border-gray-400 px-4 py-2 text-right text-sm font-bold text-gray-900">
                 پاسخ
               </th>
-              <th className="border-gray-400 px-4 py-3 text-center text-sm font-bold text-gray-900">
+              <th className="border-gray-400 px-4 py-2 text-center text-sm font-bold text-gray-900">
                 تعداد
               </th>
-              <th className="border-gray-400 px-4 py-3 text-center text-sm font-bold text-gray-900">
+              <th className="border-gray-400 px-4 py-2 text-center text-sm font-bold text-gray-900">
                 درصد
               </th>
             </tr>
@@ -82,14 +81,14 @@ const QuizResultsModalContent = ({
             <tr>
               <th
                 scope="row"
-                className="border-t border-gray-300 bg-green-50 px-4 py-3 text-right font-medium text-green-800"
+                className="border-t border-gray-300 bg-green-50 px-4 py-2 text-right font-medium text-green-800"
               >
                 درست
               </th>
-              <td className="border-t border-gray-300 bg-green-50 px-4 py-3 text-center font-semibold text-green-600">
+              <td className="border-t border-gray-300 bg-green-50 px-4 py-2 text-center font-semibold text-green-600">
                 {toFaNums(corrects)}
               </td>
-              <td className="border-t border-gray-300 bg-green-50 px-4 py-3 text-center font-semibold text-green-600">
+              <td className="border-t border-gray-300 bg-green-50 px-4 py-2 text-center font-semibold text-green-600">
                 {truePercent}
               </td>
             </tr>
@@ -97,14 +96,14 @@ const QuizResultsModalContent = ({
             <tr>
               <th
                 scope="row"
-                className="border-t border-gray-300 bg-red-50 px-4 py-3 text-right font-medium text-red-800"
+                className="border-t border-gray-300 bg-red-50 px-4 py-2 text-right font-medium text-red-800"
               >
                 نادرست
               </th>
-              <td className="border-t border-gray-300 bg-red-50 px-4 py-3 text-center font-semibold text-red-600">
+              <td className="border-t border-gray-300 bg-red-50 px-4 py-2 text-center font-semibold text-red-600">
                 {toFaNums(incorrects)}
               </td>
-              <td className="border-t border-gray-300 bg-red-50 px-4 py-3 text-center font-semibold text-red-600">
+              <td className="border-t border-gray-300 bg-red-50 px-4 py-2 text-center font-semibold text-red-600">
                 {falsePercent}
               </td>
             </tr>
@@ -112,18 +111,32 @@ const QuizResultsModalContent = ({
             <tr>
               <th
                 scope="row"
-                className="border-t border-gray-300 bg-gray-50 px-4 py-3 text-right font-medium text-gray-800"
+                className="border-t border-gray-300 bg-gray-50 px-4 py-2 text-right font-medium text-gray-800"
               >
                 نزده
               </th>
-              <td className="border-t border-gray-300 bg-gray-50 px-4 py-3 text-center font-semibold text-gray-600">
+              <td className="border-t border-gray-300 bg-gray-50 px-4 py-2 text-center font-semibold text-gray-600">
                 {toFaNums(unAnswered)}
               </td>
-              <td className="border-t border-gray-300 bg-gray-50 px-4 py-3 text-center font-semibold text-gray-600">
+              <td className="border-t border-gray-300 bg-gray-50 px-4 py-2 text-center font-semibold text-gray-600">
                 {nullPercent}
               </td>
             </tr>
           </tbody>
+          <tfoot className="bg-gray-200">
+            <tr>
+              <th
+                colSpan={2}
+                className="border-gray-400 px-4 py-2 text-right text-sm font-bold text-gray-900"
+              >
+                درصدت با نمره منفی
+              </th>
+
+              <th className="border-gray-400 px-4 py-2 text-center text-sm font-bold text-gray-900">
+                {percentWithNegativeInfluence}
+              </th>
+            </tr>
+          </tfoot>
         </table>
       </div>
 

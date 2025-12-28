@@ -2,7 +2,10 @@ button {
   touch-action: manipulation;
 }
 
-/* Layout */
+/* =========================
+   Layout
+========================= */
+
 .mid-section {
   max-width: 840px;
   min-width: 320px;
@@ -19,14 +22,27 @@ button {
   }
 }
 
+/* =========================
+   Navbar
+========================= */
+
 .navbar {
   margin-inline: 8px;
   display: flex;
   justify-content: center;
   background: #eee;
   overflow: hidden;
-  /* border-radius: 0px 0px 24px 24px; */
-  /* border: 2px solid black; */
+  border-top: none;
+}
+
+.navbar {
+  margin-inline: 8px;
+  display: flex;
+  justify-content: center;
+  background: #eee;
+  overflow: hidden;
+  border: 2px solid rgb(188, 188, 188);
+  border-radius: 0px 0px 24px 24px;
   border-top: none;
   /* box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.5); */
   /* box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.75);
@@ -34,32 +50,69 @@ button {
   -moz-box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.75); */
 }
 
+/* =========================
+   Tabs Buttons Container
+========================= */
+
 .tab-btns {
   flex-grow: 1;
   display: flex;
   position: relative;
 }
 
+/* main tabs */
 .book-btn,
 .quiz-btn,
 .yavar-btn {
   flex-grow: 1;
 }
 
+/* =========================
+   Navigation Button
+========================= */
+
 .nav-btn {
+  position: relative;
+  z-index: 1;
+
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+
   height: 56px;
   width: 64px;
+
   cursor: pointer;
-  transition: background 0.3s ease;
 }
 
-.nav-btn:hover {
-  background: #ddd;
+/* =========================
+   Hover Background (Pseudo)
+========================= */
+
+.nav-btn::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.06);
+
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: -1;
 }
+
+.nav-btn:hover::before {
+  opacity: 1;
+}
+
+/* =========================
+   Labels
+========================= */
 
 .tab-label {
   margin-right: 8px;
@@ -71,23 +124,43 @@ button {
   display: none;
 }
 
+/* =========================
+   Active Tab Indicator
+========================= */
+
 .active-tab-indicator {
   position: absolute;
-  bottom: 0;
+  top: 4px;
+  bottom: 4px;
   right: 0;
-  width: 33.33%; /* activeTabIndicator.style.width = `${100 / tabsCount}%`; */
-  height: 4px;
-  background-color: dodgerblue;
-  transition: transform 0.3s;
+
+  width: 33.33%; /* 100 / tabsCount */
+  border-radius: 12px;
+
+  /* background: rgba(30, 144, 255, 0.2); */
+  /* background-color: #ddd; */
+  background-color: rgba(30, 144, 255, 0.2);
+  transition: transform 0.3s ease;
+
+  z-index: 0;
 }
 
+/* =========================
+   Responsive
+========================= */
+
 @media screen and (max-width: 600px) {
+  .navbar {
+    border-radius: 24px 24px 0px 0px;
+    border-top: 2px solid rgb(188, 188, 188);
+    border-bottom: none;
+  }
   .nav-btn {
     flex-direction: column;
   }
 
   .tab-label {
-    margin-right: 0px;
+    margin-right: 0;
     font-size: 14px;
   }
 
@@ -95,35 +168,44 @@ button {
   .menu-btn .tab-label {
     display: block;
   }
-
-  .active-tab-indicator {
-    top: 0;
-  }
 }
+
+/* =========================
+   Icons
+========================= */
 
 .icon--fehrest {
   font-size: 36px;
   transform: scale(-1);
 }
+
 .icon--book {
   font-size: 32px;
 }
+
 .icon--quiz {
   font-size: 32px;
   transform: rotate(45deg);
 }
+
 .icon--yavar {
   font-size: 32px;
 }
+
 .icon--menu {
   font-size: 30px;
 }
+
+/* =========================
+   Tabs Content
+========================= */
 
 .tabs {
   display: flex;
   flex-direction: row;
   transition: transform 0.3s ease;
-  width: 300%; /* tabsContainer.style.width = `${100 * tabsCount}%`; */
+
+  width: 300%;
   height: calc(100vh - 58px);
   height: calc(100dvh - 58px);
 }
@@ -131,7 +213,8 @@ button {
 .tab-container {
   flex-shrink: 0;
   overflow: auto;
-  width: 33.33%; /* tabContainer.style.width = `${100 / tabsCount}%`; */
+
+  width: 33.33%;
   height: 100%;
   position: relative;
 }
@@ -635,7 +718,8 @@ input[type="number"]::-webkit-outer-spin-button {
   padding: 16px 16px;
   /* padding-top: 0px; */
   border: 2px solid black;
-  border-radius: 16px;
+  /* border-radius: 16px; */
+  border-radius: 32px;
   width: 100%;
   /* height: auto; */
   height: 116px;
@@ -686,7 +770,8 @@ input[type="number"]::-webkit-outer-spin-button {
   padding-right: 16px;
   margin-block: 16px;
   /* margin-bottom: 16px; */
-  border-radius: 6px;
+  /* border-radius: 6px; */
+  border-radius: 16px;
   font-size: 18px;
   font-weight: bold;
   background-color: transparent;
