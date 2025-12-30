@@ -144,6 +144,7 @@ const Book = () => {
 
         <div id="BookSection" className="book-section">
           {renderedPages}
+          {/* {contentState} */}
         </div>
       </div>
     </>

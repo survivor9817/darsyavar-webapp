@@ -1,4 +1,4 @@
-import { useMemo, type ChangeEvent } from "react";
+import { useMemo, type ChangeEvent, type RefObject } from "react";
 
 type Props = {
   id: string;
@@ -6,9 +6,10 @@ type Props = {
   value: string;
   options: { id: number; value: string; text: string }[];
   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+  ref?: RefObject<HTMLSelectElement | null>;
 };
 
-const FilterSelector = ({ id, label, value, options, onChange }: Props) => {
+const FilterSelector = ({ id, label, value, options, onChange, ref }: Props) => {
   const renderedOptions = useMemo(
     () =>
       options.map(({ value, text }, index) => {
@@ -26,7 +27,7 @@ const FilterSelector = ({ id, label, value, options, onChange }: Props) => {
       <label htmlFor={id} className={`filter-label ${value ? "up" : null}`}>
         {label}
       </label>
-      <select id={id} name={id} value={value} onChange={onChange}>
+      <select ref={ref} id={id} name={id} value={value} onChange={onChange} tabIndex={0}>
         <option value=""></option>
         {renderedOptions}
       </select>

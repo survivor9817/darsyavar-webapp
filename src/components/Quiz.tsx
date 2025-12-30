@@ -46,10 +46,25 @@ const Quiz = () => {
     resetFilters();
   }, [currentBook]);
 
+  // const whereRef = useRef<HTMLSelectElement>(null);
+  // const levelRef = useRef<HTMLSelectElement>(null);
+  // const sourceRef = useRef<HTMLSelectElement>(null);
+
+  // function handleFiltersFocus(id: string, value: string) {
+  //   if (id === "Where" && value !== "") {
+  //     // اگر Where انتخاب شد، Level را فوکوس کن
+  //     setTimeout(() => levelRef.current?.focus(), 100);
+  //   } else if (id === "Level" && value !== "") {
+  //     // اگر Level انتخاب شد، Source را فوکوس کن
+  //     setTimeout(() => sourceRef.current?.focus(), 100);
+  //   }
+  // }
+
   function onFilterChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const value = event.target.value;
     const id = event.target.id;
     setFiltersData({ ...filtersData, [id]: value });
+    // handleFiltersFocus(id, value);
     console.log(filtersData);
   }
 
@@ -95,6 +110,7 @@ const Quiz = () => {
       return filterHeights.Where;
     }
   }
+
   // ##########################################################################
 
   const quizContextValue: QuizContextType = {
@@ -111,6 +127,7 @@ const Quiz = () => {
             <form className="filter-section" action={startQuiz}>
               <div className="quiz-filters" style={{ height: getHeight() }}>
                 <FilterSelector
+                  // ref={whereRef}
                   id={"Where"}
                   label={"از کجای کتاب تمرین می‌خوای؟"}
                   value={filtersData.Where}
@@ -119,6 +136,7 @@ const Quiz = () => {
                 />
 
                 <FilterSelector
+                  // ref={levelRef}
                   id="Level"
                   label="در چه سطحی باشند؟"
                   value={filtersData.Level}
@@ -127,6 +145,7 @@ const Quiz = () => {
                 />
 
                 <FilterSelector
+                  // ref={sourceRef}
                   id="Source"
                   label="از چه منبعی باشند؟"
                   value={filtersData.Source}
