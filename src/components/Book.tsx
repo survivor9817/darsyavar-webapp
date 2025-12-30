@@ -80,7 +80,6 @@ const Book = () => {
     if (e.key === "Enter") {
       const inputPage = convertToEnglishDigits(e.currentTarget.value);
       onFocusPageNumber.current = +inputPage;
-      console.log(onFocusPageNumber.current);
       goToPage(+inputPage);
     }
   }

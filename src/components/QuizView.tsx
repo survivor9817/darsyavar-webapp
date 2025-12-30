@@ -13,6 +13,7 @@ import QuestionTag from "./QuestionTag";
 import QuizResultsModalContent from "./QuizResultsModalContent";
 import QuizEndConfirm from "./QuizEndConfirm";
 import useToggle from "../hooks/useToggle";
+// import { BookContext } from "./Layout";
 
 const QuizView = () => {
   // ==================================================================
@@ -56,10 +57,20 @@ const QuizView = () => {
     questionIDs.current
   );
 
-  const { setQuizStatus } = useContext(QuizContext);
+  const { /* quizStatus ,*/ setQuizStatus } = useContext(QuizContext);
+  // const { currentBook, goToQuiz } = useContext(BookContext);
   function showFilterView() {
     setQuizStatus("off");
   }
+
+  // age ketaab ro vasate tamrin avaz kard avaz nashe,
+  // kaarbaro majboor kone be bastane quiz.
+  // useEffect(() => {
+  //   if (quizStatus === "in-progress") {
+  //     goToQuiz();
+  //     openEndConfirm();
+  //   }
+  // }, [currentBook]);
 
   function endQuiz() {
     closeEndConfirm();

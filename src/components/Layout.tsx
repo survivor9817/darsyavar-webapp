@@ -12,6 +12,7 @@ type BookContextType = {
   setCurrentBook: (value: string) => void;
   currentPage: number | "";
   setCurrentPage: (value: number | "") => void;
+  goToQuiz: () => void;
 };
 
 export const BookContext = createContext<BookContextType>({
@@ -19,6 +20,7 @@ export const BookContext = createContext<BookContextType>({
   setCurrentBook: () => {},
   currentPage: 1,
   setCurrentPage: () => {},
+  goToQuiz: () => {},
 });
 
 const Layout = () => {
@@ -91,12 +93,15 @@ const Layout = () => {
 
   const [currentBook, setCurrentBook] = useLocalStorage("lastBookRead", "علوم تجربی ۷");
   const [currentPage, setCurrentPage] = useLocalStorage<number | "">(currentBook, 1);
+  // in current page tooye context hastesh. baa tavajoh be taghiraatesh
+  // mitoonim vaase lazy load shodane content haa barnaame berizim.
 
   const bookContextValue: BookContextType = {
     currentBook,
     setCurrentBook,
     currentPage,
     setCurrentPage,
+    goToQuiz,
   };
 
   return (

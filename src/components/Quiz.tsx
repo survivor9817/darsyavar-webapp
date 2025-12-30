@@ -6,10 +6,12 @@ import { options } from "../data/filterOptionsData";
 // import { QuizSession } from "../classes/QuizSession";
 
 type QuizContextType = {
+  quizStatus: string;
   setQuizStatus: (value: string) => void;
 };
 
 export const QuizContext = createContext<QuizContextType>({
+  quizStatus: "",
   setQuizStatus: () => {},
 });
 
@@ -96,6 +98,7 @@ const Quiz = () => {
   // ##########################################################################
 
   const quizContextValue: QuizContextType = {
+    quizStatus,
     setQuizStatus,
   };
 
