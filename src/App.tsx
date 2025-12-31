@@ -1,12 +1,12 @@
-// import Layout from "./components/Layout";
+import Layout from "./components/Layout";
+// import MainPage from "./components/MainPage";
 import "./app.css";
-import MainPage from "./components/MainPage";
 
 const App = () => {
   return (
     <>
-      <MainPage />
-      {/* <Layout /> */}
+      {/* <MainPage /> */}
+      <Layout />
     </>
   );
 };
