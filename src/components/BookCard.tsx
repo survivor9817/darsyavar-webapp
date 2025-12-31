@@ -7,8 +7,8 @@ interface Props {
 
 const BookCard = ({ book }: Props) => {
   return (
-    <div className="group min-w-[150px] bg-white rounded-2xl shadow-sm hover:shadow-md transition">
-      <div className="h-[180px] rounded-t-2xl overflow-hidden bg-gray-100">
+    <div className="group min-w-37.5 bg-white rounded-2xl shadow-sm hover:shadow-md transition">
+      <div className="h-45 rounded-t-2xl overflow-hidden bg-gray-100">
         <img
           src={book.cover}
           alt={book.title}
